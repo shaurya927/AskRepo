@@ -43,4 +43,14 @@ class RepositoryStatsResponse(BaseModel):
     entry_points: list[str]
     config_files: list[str]
     test_files_count: int
+    # Phase 2 fields
+    total_functions: int = 0
+    total_classes: int = 0
+    total_methods: int = 0
+    avg_complexity: float = 0.0
+    max_complexity: int = 0
+    complexity_distribution: dict = {}
+    internal_dependencies: int = 0
+    external_dependencies: int = 0
     model_config = ConfigDict(from_attributes=True)
+

@@ -6,7 +6,10 @@ import type {
   AnalysisJob,
   Repository,
   RepositoryFile,
-  RepositoryStats
+  RepositoryStats,
+  CodeSymbol,
+  CodeImport,
+  RepositoryMetrics
 } from '../types/api'
 
 const api = axios.create({
@@ -66,5 +69,37 @@ export const getRepositoryFiles = async (
 
 export const getRepositoryStats = async (repoId: string): Promise<RepositoryStats> => {
   const response = await api.get(`/repositories/${repoId}/stats`)
+  return response.data
+}
+
+export const getRepositorySymbols = async (
+  repoId: string,
+  page: number = 1,
+  symbolType?: string,
+  language?: string,
+  search?: string
+): Promise<{ items: CodeSymbol[]; total: number; page: number; size: number }> => {
+  const params: Record<string, string | number> = { page }
+  if (symbolType) params.symbol_type = symbolType
+  if (language) params.language = language
+  if (search) params.search = search
+  const response = await api.get(`/repositories/${repoId}/symbols`, { params })
+  return response.data
+}
+
+export const getRepositoryImports = async (
+  repoId: string,
+  isInternal?: boolean
+): Promise<{ items: CodeImport[]; total: number }> => {
+  const params: Record<string, any> = {}
+  if (isInternal !== undefined) params.is_internal = isInternal
+  const response = await api.get(`/repositories/${repoId}/imports`, { params })
+  return response.data
+}
+
+export const getRepositoryMetrics = async (
+  repoId: string
+): Promise<RepositoryMetrics> => {
+  const response = await api.get(`/repositories/${repoId}/metrics`)
   return response.data
 }

@@ -11,3 +11,6 @@ httpx
 python-dotenv
 pytest
 pytest-asyncio
+
+tree-sitter
+tree-sitter-language-pack

@@ -55,6 +55,58 @@ export interface RepositoryStats {
   entry_points: string[]
   config_files: string[]
   test_files_count: number
+  total_functions: number
+  total_classes: number
+  total_methods: number
+  avg_complexity: number
+  max_complexity: number
+  complexity_distribution: Record<string, number>
+  internal_dependencies: number
+  external_dependencies: number
+}
+
+export interface CodeSymbol {
+  id: string
+  repository_id: string
+  file_path: string
+  name: string
+  symbol_type: 'function' | 'class' | 'method' | 'interface'
+  language: string
+  start_line: number
+  end_line: number
+  class_name: string | null
+  signature: string | null
+  docstring: string | null
+  decorators: string[]
+  complexity: number
+}
+
+export interface CodeImport {
+  id: string
+  repository_id: string
+  file_path: string
+  source: string
+  names: string[]
+  is_relative: boolean
+  resolved_path: string | null
+  is_internal: boolean
+  line: number
+}
+
+export interface RepositoryMetrics {
+  total_functions: number
+  total_classes: number
+  total_methods: number
+  avg_complexity: number
+  max_complexity: number
+  complexity_distribution: {
+    low: number
+    medium: number
+    high: number
+    very_high: number
+  }
+  internal_dependencies: number
+  external_dependencies: number
 }
 
 export interface CreateRepositoryResponse {

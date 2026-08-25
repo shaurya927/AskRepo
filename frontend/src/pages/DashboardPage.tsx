@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { FileCode, Folder, Database, Code, ShieldAlert, FileText, Settings, Play } from 'lucide-react'
+import {
+  FileCode, Folder, Database, Code, ShieldAlert, FileText, Settings, Play,
+  FunctionSquare, Box, Braces, Activity, GitFork, Package
+} from 'lucide-react'
 import { getRepository, getRepositoryStats, getRepositoryFiles } from '../services/api'
 import type { Repository, RepositoryStats, RepositoryFile } from '../types/api'
 import { formatNumber, formatBytes } from '../utils/format'
@@ -8,17 +11,19 @@ import StatsCard from '../components/StatsCard'
 import LanguageBar from '../components/LanguageBar'
 import FileList from '../components/FileList'
 import Badge from '../components/Badge'
+import SymbolList from '../components/SymbolList'
+import ComplexityChart from '../components/ComplexityChart'
 
-type TabType = 'overview' | 'files' | 'architecture' | 'dependencies' | 'history' | 'chat'
+type TabType = 'overview' | 'files' | 'symbols' | 'architecture' | 'dependencies' | 'history' | 'chat'
 
 const DashboardPage: React.FC = () => {
   const { repoId } = useParams<{ repoId: string }>()
   const [activeTab, setActiveTab] = useState<TabType>('overview')
-  
+
   const [repo, setRepo] = useState<Repository | null>(null)
   const [stats, setStats] = useState<RepositoryStats | null>(null)
   const [files, setFiles] = useState<RepositoryFile[]>([])
-  
+
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -34,11 +39,10 @@ const DashboardPage: React.FC = () => {
         ])
         setRepo(repoData)
         setStats(statsData)
-        
-        // Also fetch initial files
+
         const filesData = await getRepositoryFiles(repoId, 1)
         setFiles(filesData.files)
-        
+
         setIsLoading(false)
       } catch (err: any) {
         setError(err.message || 'Failed to load repository data')
@@ -72,9 +76,12 @@ const DashboardPage: React.FC = () => {
     )
   }
 
+  const totalSymbols = (stats.total_functions || 0) + (stats.total_classes || 0) + (stats.total_methods || 0)
+
   const tabs: { id: TabType; label: string; count?: number }[] = [
     { id: 'overview', label: 'Overview' },
     { id: 'files', label: 'Files', count: stats.total_files },
+    { id: 'symbols', label: 'Symbols', count: totalSymbols },
     { id: 'architecture', label: 'Architecture' },
     { id: 'dependencies', label: 'Dependencies' },
     { id: 'history', label: 'Git History' },
@@ -98,7 +105,7 @@ const DashboardPage: React.FC = () => {
               </a>
             )}
           </div>
-          
+
           <div className="flex space-x-1 overflow-x-auto">
             {tabs.map(tab => (
               <button
@@ -129,9 +136,10 @@ const DashboardPage: React.FC = () => {
       {/* Main Content */}
       <div className="flex-1 p-6 overflow-y-auto">
         <div className="max-w-7xl mx-auto">
-          
+
           {activeTab === 'overview' && (
             <div className="space-y-6">
+              {/* File stats */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatsCard icon={FileText} label="Total Files" value={formatNumber(stats.total_files)} subtitle={`Size: ${formatBytes(stats.total_size)}`} />
                 <StatsCard icon={Folder} label="Directories" value={formatNumber(stats.total_directories)} />
@@ -139,11 +147,58 @@ const DashboardPage: React.FC = () => {
                 <StatsCard icon={Database} label="Languages" value={Object.keys(stats.languages).length} subtitle={`Primary: ${stats.primary_language || 'Unknown'}`} />
               </div>
 
+              {/* Code intelligence stats */}
+              {totalSymbols > 0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <StatsCard icon={FunctionSquare} label="Functions" value={formatNumber(stats.total_functions)} />
+                  <StatsCard icon={Box} label="Classes" value={formatNumber(stats.total_classes)} />
+                  <StatsCard icon={Braces} label="Methods" value={formatNumber(stats.total_methods)} />
+                  <StatsCard icon={Activity} label="Avg Complexity" value={stats.avg_complexity.toFixed(1)} subtitle={`Max: ${stats.max_complexity}`} />
+                </div>
+              )}
+
+              {/* Languages */}
               <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg p-6">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-[#e6edf3] mb-4">Languages</h3>
                 <LanguageBar languages={stats.languages} totalLines={stats.total_lines} />
               </div>
 
+              {/* Complexity + Dependencies */}
+              {totalSymbols > 0 && (
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg p-6">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-[#e6edf3] mb-4">Complexity Distribution</h3>
+                    <ComplexityChart
+                      distribution={{
+                        low: stats.complexity_distribution?.low ?? 0,
+                        medium: stats.complexity_distribution?.medium ?? 0,
+                        high: stats.complexity_distribution?.high ?? 0,
+                        very_high: stats.complexity_distribution?.very_high ?? 0,
+                      }}
+                    />
+                  </div>
+
+                  <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg p-6 space-y-4">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-[#e6edf3] mb-4">Dependencies</h3>
+                    <div className="flex items-center justify-between py-2">
+                      <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-[#8b949e]">
+                        <GitFork size={16} className="text-[#58a6ff]" />
+                        Internal
+                      </div>
+                      <span className="font-semibold text-gray-900 dark:text-[#e6edf3]">{formatNumber(stats.internal_dependencies)}</span>
+                    </div>
+                    <div className="flex items-center justify-between py-2">
+                      <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-[#8b949e]">
+                        <Package size={16} className="text-[#d29922]" />
+                        External
+                      </div>
+                      <span className="font-semibold text-gray-900 dark:text-[#e6edf3]">{formatNumber(stats.external_dependencies)}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Entry points, config, frameworks */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg p-6 space-y-6">
                   <div>
@@ -162,7 +217,7 @@ const DashboardPage: React.FC = () => {
                       <p className="text-sm text-gray-400">No common entry points detected.</p>
                     )}
                   </div>
-                  
+
                   <div>
                     <h3 className="text-sm font-medium text-gray-500 dark:text-[#8b949e] flex items-center gap-2 mb-3">
                       <Settings size={16} /> Configuration Files
@@ -192,7 +247,7 @@ const DashboardPage: React.FC = () => {
                       <p className="text-sm text-gray-400">None detected.</p>
                     )}
                   </div>
-                  
+
                   <div>
                     <h3 className="text-sm font-medium text-gray-500 dark:text-[#8b949e] mb-3">Package Managers</h3>
                     {stats.package_managers.length > 0 ? (
@@ -205,7 +260,7 @@ const DashboardPage: React.FC = () => {
                       <p className="text-sm text-gray-400">None detected.</p>
                     )}
                   </div>
-                  
+
                   <div>
                     <h3 className="text-sm font-medium text-gray-500 dark:text-[#8b949e] mb-3">Testing</h3>
                     <p className="text-gray-900 dark:text-[#e6edf3]">
@@ -229,13 +284,25 @@ const DashboardPage: React.FC = () => {
             </div>
           )}
 
+          {activeTab === 'symbols' && (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center">
+                <h2 className="text-lg font-medium text-gray-900 dark:text-[#e6edf3]">Code Symbols</h2>
+                <div className="text-sm text-gray-500 dark:text-[#8b949e]">
+                  {formatNumber(totalSymbols)} symbols across {Object.keys(stats.languages).length} languages
+                </div>
+              </div>
+              <SymbolList repoId={repoId!} />
+            </div>
+          )}
+
           {['architecture', 'dependencies', 'history', 'chat'].includes(activeTab) && (
             <div className="flex flex-col items-center justify-center py-20 bg-gray-50 dark:bg-[#0d1117] border border-dashed border-gray-300 dark:border-[#30363d] rounded-lg">
               <h3 className="text-xl font-medium text-gray-900 dark:text-[#e6edf3] mb-2 capitalize">{activeTab}</h3>
-              <p className="text-gray-500 dark:text-[#8b949e]">This feature is coming in Phase 2.</p>
+              <p className="text-gray-500 dark:text-[#8b949e]">This feature is coming in a future phase.</p>
             </div>
           )}
-          
+
         </div>
       </div>
     </div>
