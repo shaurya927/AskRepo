@@ -10,9 +10,9 @@ function App() {
   return (
     <ThemeProvider>
       <ErrorBoundary>
-        <div className="min-h-screen bg-white dark:bg-[#0d1117] text-gray-900 dark:text-[#e6edf3] flex flex-col font-sans transition-colors duration-150">
+        <div className="h-screen bg-white dark:bg-[#0d1117] text-gray-900 dark:text-[#e6edf3] flex flex-col font-sans transition-colors duration-150 overflow-hidden">
           <Header />
-          <main className="flex-1 flex flex-col">
+          <main className="flex-1 flex flex-col relative overflow-y-auto">
             <Routes>
               <Route path="/" element={<LandingPage />} />
               <Route path="/analysis/:jobId" element={<AnalysisProgressPage />} />

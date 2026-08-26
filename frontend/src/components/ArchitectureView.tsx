@@ -66,16 +66,16 @@ const ArchitectureView: React.FC<ArchitectureViewProps> = ({ repoId }) => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <Loader2 className="animate-spin text-[#8b949e]" size={24} />
+        <Loader2 className="animate-spin text-gray-500 dark:text-[#8b949e]" size={24} />
       </div>
     )
   }
 
   if (!data || data.summary.categories.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 bg-[#0d1117] border border-dashed border-[#30363d] rounded-lg">
-        <FolderTree size={48} className="text-[#30363d] mb-4" />
-        <p className="text-[#8b949e]">No architecture data available.</p>
+      <div className="flex flex-col items-center justify-center py-20 bg-gray-50 dark:bg-[#0d1117] border border-dashed border-gray-200 dark:border-[#30363d] rounded-lg">
+        <FolderTree size={48} className="text-gray-300 dark:text-[#30363d] mb-4" />
+        <p className="text-gray-500 dark:text-[#8b949e]">No architecture data available.</p>
       </div>
     )
   }
@@ -86,9 +86,9 @@ const ArchitectureView: React.FC<ArchitectureViewProps> = ({ repoId }) => {
   return (
     <div className="space-y-6">
       {/* Distribution Bar */}
-      <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-4">
-        <h3 className="text-sm font-medium text-[#e6edf3] mb-3">Architecture Distribution</h3>
-        <div className="flex h-6 rounded-md overflow-hidden border border-[#30363d]">
+      <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg p-4">
+        <h3 className="text-sm font-medium text-gray-900 dark:text-[#e6edf3] mb-3">Architecture Distribution</h3>
+        <div className="flex h-6 rounded-md overflow-hidden border border-gray-200 dark:border-[#30363d]">
           {categories.map(cat => (
             <div
               key={cat.name}
@@ -104,13 +104,13 @@ const ArchitectureView: React.FC<ArchitectureViewProps> = ({ repoId }) => {
         </div>
         <div className="flex flex-wrap gap-3 mt-3">
           {categories.map(cat => (
-            <div key={cat.name} className="flex items-center gap-1.5 text-xs text-[#8b949e]">
+            <div key={cat.name} className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-[#8b949e]">
               <div
                 className="w-2.5 h-2.5 rounded-sm"
                 style={{ backgroundColor: CATEGORY_COLORS[cat.name] || '#8b949e' }}
               />
-              <span className="capitalize">{cat.name}</span>
-              <span className="text-[#6e7681]">{cat.percentage}%</span>
+              <span className="capitalize text-gray-700 dark:text-[#c9d1d9]">{cat.name}</span>
+              <span className="text-gray-400 dark:text-[#6e7681]">{cat.percentage}%</span>
             </div>
           ))}
         </div>
@@ -118,21 +118,21 @@ const ArchitectureView: React.FC<ArchitectureViewProps> = ({ repoId }) => {
 
       {/* Summary Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-3">
-          <p className="text-xs text-[#8b949e]">Total Classified</p>
-          <p className="text-xl font-semibold text-[#e6edf3]">{totalFiles}</p>
+        <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg p-3">
+          <p className="text-xs text-gray-500 dark:text-[#8b949e]">Total Classified</p>
+          <p className="text-xl font-semibold text-gray-900 dark:text-[#e6edf3]">{totalFiles}</p>
         </div>
-        <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-3">
-          <p className="text-xs text-[#8b949e]">Categories</p>
-          <p className="text-xl font-semibold text-[#e6edf3]">{categories.length}</p>
+        <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg p-3">
+          <p className="text-xs text-gray-500 dark:text-[#8b949e]">Categories</p>
+          <p className="text-xl font-semibold text-gray-900 dark:text-[#e6edf3]">{categories.length}</p>
         </div>
-        <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-3">
-          <p className="text-xs text-[#8b949e]">Largest Layer</p>
-          <p className="text-xl font-semibold text-[#e6edf3] capitalize">{categories[0]?.name || '-'}</p>
+        <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg p-3">
+          <p className="text-xs text-gray-500 dark:text-[#8b949e]">Largest Layer</p>
+          <p className="text-xl font-semibold text-gray-900 dark:text-[#e6edf3] capitalize">{categories[0]?.name || '-'}</p>
         </div>
-        <div className="bg-[#161b22] border border-[#30363d] rounded-lg p-3">
-          <p className="text-xs text-[#8b949e]">Largest Count</p>
-          <p className="text-xl font-semibold text-[#e6edf3]">{categories[0]?.file_count || 0}</p>
+        <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg p-3">
+          <p className="text-xs text-gray-500 dark:text-[#8b949e]">Largest Count</p>
+          <p className="text-xl font-semibold text-gray-900 dark:text-[#e6edf3]">{categories[0]?.file_count || 0}</p>
         </div>
       </div>
 
@@ -144,17 +144,17 @@ const ArchitectureView: React.FC<ArchitectureViewProps> = ({ repoId }) => {
           const displayFiles = isExpanded ? allFiles : allFiles.slice(0, 5)
 
           return (
-            <div key={cat.name} className="bg-[#161b22] border border-[#30363d] rounded-lg overflow-hidden">
-              <div className="flex items-center justify-between p-3 border-b border-[#30363d]">
+            <div key={cat.name} className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg overflow-hidden shadow-sm">
+              <div className="flex items-center justify-between p-3 border-b border-gray-100 dark:border-[#30363d]">
                 <div className="flex items-center gap-2">
                   <span className="text-base">{CATEGORY_ICONS[cat.name] || '📁'}</span>
-                  <span className="text-sm font-medium text-[#e6edf3] capitalize">{cat.name}</span>
-                  <span className="text-xs px-1.5 py-0.5 bg-[#21262d] border border-[#30363d] rounded text-[#8b949e]">
+                  <span className="text-sm font-medium text-gray-900 dark:text-[#e6edf3] capitalize">{cat.name}</span>
+                  <span className="text-xs px-1.5 py-0.5 bg-gray-100 dark:bg-[#21262d] border border-gray-200 dark:border-[#30363d] rounded text-gray-500 dark:text-[#8b949e]">
                     {cat.file_count}
                   </span>
                 </div>
                 <div
-                  className="w-16 h-1.5 rounded-full bg-[#21262d] overflow-hidden"
+                  className="w-16 h-1.5 rounded-full bg-gray-100 dark:bg-[#21262d] overflow-hidden"
                 >
                   <div
                     className="h-full rounded-full"
@@ -168,7 +168,7 @@ const ArchitectureView: React.FC<ArchitectureViewProps> = ({ repoId }) => {
               <div className="p-3">
                 <ul className="space-y-1">
                   {displayFiles.map((fp, i) => (
-                    <li key={i} className="text-xs font-mono text-[#8b949e] truncate" title={fp}>
+                    <li key={i} className="text-xs font-mono text-gray-500 dark:text-[#8b949e] truncate" title={fp}>
                       {fp}
                     </li>
                   ))}
@@ -176,7 +176,7 @@ const ArchitectureView: React.FC<ArchitectureViewProps> = ({ repoId }) => {
                 {allFiles.length > 5 && (
                   <button
                     onClick={() => toggleExpand(cat.name)}
-                    className="flex items-center gap-1 mt-2 text-xs text-[#58a6ff] hover:underline"
+                    className="flex items-center gap-1 mt-2 text-xs text-blue-600 dark:text-[#58a6ff] hover:underline"
                   >
                     {isExpanded ? (
                       <><ChevronDown size={12} /> Show less</>
