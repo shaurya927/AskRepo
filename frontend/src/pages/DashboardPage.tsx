@@ -45,7 +45,7 @@ const DashboardPage: React.FC = () => {
         setStats(statsData)
 
         const filesData = await getRepositoryFiles(repoId, 1)
-        setFiles(filesData.files)
+        setFiles(filesData.items || [])
 
         setIsLoading(false)
       } catch (err: any) {

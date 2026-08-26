@@ -68,7 +68,7 @@ export const getRepositoryFiles = async (
   repoId: string,
   page: number = 1,
   language?: string
-): Promise<{ files: RepositoryFile[]; total: number; page: number; page_size: number }> => {
+): Promise<{ items: RepositoryFile[]; total: number; page: number; size: number }> => {
   const params: Record<string, string | number> = { page }
   if (language) {
     params.language = language
