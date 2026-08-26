@@ -99,65 +99,31 @@ class GitAnalyzer:
                 committed_date=committed,
             )
 
-            # Extract diff stats
+            # Extract diff stats efficiently using commit.stats.files
             try:
-                if commit.parents:
-                    parent = commit.parents[0]
-                    diffs = parent.diff(commit, create_patch=True)
-                else:
-                    # Initial commit — diff against empty tree
-                    diffs = commit.diff(None, create_patch=True)
-
-                cd.files_changed = len(diffs)
-
-                for diff in diffs:
-                    # Determine change type
-                    if diff.new_file:
+                stats = commit.stats.files
+                cd.files_changed = len(stats)
+                
+                for file_path, stat in stats.items():
+                    # Guess change type (stats doesn't give precise type)
+                    # We will default to modified.
+                    change_type = "modified"
+                    if stat.get("insertions", 0) > 0 and stat.get("deletions", 0) == 0 and stat.get("lines", 0) == stat.get("insertions", 0):
                         change_type = "added"
-                    elif diff.deleted_file:
-                        change_type = "deleted"
-                    elif diff.renamed_file:
-                        change_type = "renamed"
-                    else:
-                        change_type = "modified"
-
-                    # Get file path
-                    file_path = diff.b_path or diff.a_path or "unknown"
-
-                    # Extract patch text
-                    patch = None
-                    ins = 0
-                    dels = 0
-                    try:
-                        if diff.diff:
-                            raw = diff.diff
-                            if isinstance(raw, bytes):
-                                raw = raw.decode("utf-8", errors="replace")
-                            if len(raw) <= self.max_diff_size:
-                                patch = raw
-                            # Count insertions/deletions from patch
-                            for line in raw.split("\n"):
-                                if line.startswith("+") and not line.startswith("+++"):
-                                    ins += 1
-                                elif line.startswith("-") and not line.startswith("---"):
-                                    dels += 1
-                    except Exception:
-                        pass
-
-                    cd.insertions += ins
-                    cd.deletions += dels
-
-                    result.file_changes.append(FileChangeData(
-                        commit_sha=commit.hexsha,
+                    
+                    fc = FileChangeData(
+                        commit_sha=cd.sha,
                         file_path=file_path,
                         change_type=change_type,
-                        insertions=ins,
-                        deletions=dels,
-                        patch=patch,
-                    ))
-
+                        insertions=stat.get("insertions", 0),
+                        deletions=stat.get("deletions", 0),
+                        patch=None  # Skip patch to save massive amounts of memory
+                    )
+                    cd.insertions += fc.insertions
+                    cd.deletions += fc.deletions
+                    result.file_changes.append(fc)
             except Exception as e:
-                logger.debug(f"Failed to extract diff for {commit.hexsha[:8]}: {e}")
+                logger.warning(f"Error extracting diff for commit {cd.sha}: {e}")
 
             result.commits.append(cd)
 
