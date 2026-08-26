@@ -7,8 +7,13 @@ from app.models.repository_file import RepositoryFile  # noqa: F401
 from app.models.repository_stats import RepositoryStats  # noqa: F401
 from app.models.code_symbol import CodeSymbol  # noqa: F401
 from app.models.code_import import CodeImport  # noqa: F401
+from app.models.chat_message import ChatMessage  # noqa: F401
+from app.models.commit import Commit  # noqa: F401
+from app.models.file_change import FileChange  # noqa: F401
+from app.models.usage_log import UsageLog  # noqa: F401
 
 __all__ = [
     "Base", "Repository", "AnalysisJob", "RepositoryFile",
-    "RepositoryStats", "CodeSymbol", "CodeImport",
+    "RepositoryStats", "CodeSymbol", "CodeImport", "ChatMessage",
+    "Commit", "FileChange", "UsageLog",
 ]

@@ -14,3 +14,12 @@ pytest-asyncio
 
 tree-sitter
 tree-sitter-language-pack
+
+# Phase 3 — RAG + AI Chat
+sentence-transformers
+faiss-cpu
+numpy
+google-genai
+
+# Phase 4 — Architecture & Graph
+networkx

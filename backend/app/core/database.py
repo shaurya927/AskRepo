@@ -13,6 +13,9 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
     async with AsyncSessionLocal() as session:
         yield session
 
+# Alias for middleware that needs standalone sessions (not via Depends)
+async_session_factory = AsyncSessionLocal
+
 async def init_db():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

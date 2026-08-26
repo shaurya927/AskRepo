@@ -58,3 +58,7 @@ tmp/
 
 # Alembic
 backend/alembic/versions/*.pyc
+
+# Local database
+*.db
+backend/askrepo.db

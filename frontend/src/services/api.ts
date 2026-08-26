@@ -9,7 +9,17 @@ import type {
   RepositoryStats,
   CodeSymbol,
   CodeImport,
-  RepositoryMetrics
+  RepositoryMetrics,
+  ChatResponse,
+  ChatHistoryResponse,
+  GraphData,
+  NodeDetail,
+  ArchitectureResult,
+  CommitListResponse,
+  CommitDetail,
+  Hotspot,
+  TimelineEntry,
+  CoChange,
 } from '../types/api'
 
 const api = axios.create({
@@ -101,5 +111,94 @@ export const getRepositoryMetrics = async (
   repoId: string
 ): Promise<RepositoryMetrics> => {
   const response = await api.get(`/repositories/${repoId}/metrics`)
+  return response.data
+}
+
+// Phase 3 — Chat API
+export const sendChatMessage = async (
+  repoId: string,
+  message: string,
+  apiKey?: string
+): Promise<ChatResponse> => {
+  const response = await api.post(`/repositories/${repoId}/chat`, {
+    message,
+    api_key: apiKey || undefined,
+  })
+  return response.data
+}
+
+export const getChatHistory = async (
+  repoId: string
+): Promise<ChatHistoryResponse> => {
+  const response = await api.get(`/repositories/${repoId}/chat/history`)
+  return response.data
+}
+
+// Phase 4 — Graph & Architecture API
+export const getRepositoryGraph = async (
+  repoId: string,
+  level: string = 'file',
+  language?: string
+): Promise<GraphData> => {
+  const params: Record<string, string> = { level }
+  if (language) params.language = language
+  const response = await api.get(`/repositories/${repoId}/graph`, { params })
+  return response.data
+}
+
+export const getGraphNodeDetail = async (
+  repoId: string,
+  nodeId: string
+): Promise<NodeDetail> => {
+  const response = await api.get(`/repositories/${repoId}/graph/node/${encodeURIComponent(nodeId)}`)
+  return response.data
+}
+
+export const getRepositoryArchitecture = async (
+  repoId: string
+): Promise<ArchitectureResult> => {
+  const response = await api.get(`/repositories/${repoId}/architecture`)
+  return response.data
+}
+
+// Phase 5 — Git History API
+export const getCommits = async (
+  repoId: string,
+  page: number = 1,
+  perPage: number = 50,
+  filePath?: string
+): Promise<CommitListResponse> => {
+  const params: Record<string, string | number> = { page, per_page: perPage }
+  if (filePath) params.file_path = filePath
+  const response = await api.get(`/repositories/${repoId}/commits`, { params })
+  return response.data
+}
+
+export const getCommitDetail = async (
+  repoId: string,
+  sha: string
+): Promise<CommitDetail> => {
+  const response = await api.get(`/repositories/${repoId}/commits/${sha}`)
+  return response.data
+}
+
+export const getHotspots = async (
+  repoId: string
+): Promise<{ hotspots: Hotspot[] }> => {
+  const response = await api.get(`/repositories/${repoId}/history/hotspots`)
+  return response.data
+}
+
+export const getTimeline = async (
+  repoId: string
+): Promise<{ timeline: TimelineEntry[] }> => {
+  const response = await api.get(`/repositories/${repoId}/history/timeline`)
+  return response.data
+}
+
+export const getCoChanges = async (
+  repoId: string
+): Promise<{ co_changes: CoChange[] }> => {
+  const response = await api.get(`/repositories/${repoId}/history/co-changes`)
   return response.data
 }

@@ -15,5 +15,5 @@ class TestHealthEndpoint:
             timestamp="2024-01-01T00:00:00Z",
         )
         assert response.status == "ok"
-        assert response.version == "0.1.0"
+        assert response.version == "0.5.0"
         assert response.timestamp == "2024-01-01T00:00:00Z"

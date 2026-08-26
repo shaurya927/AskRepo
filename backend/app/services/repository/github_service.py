@@ -55,17 +55,18 @@ class GitHubService:
             resp.raise_for_status()
             return resp.json()
 
-    def clone_repository(self, url: str, target_dir: Path) -> Path:
-        """Shallow clone a repository to target_dir.
-        
-        Uses depth=1 for faster cloning and smaller footprint.
-        Full history cloning will be added in Phase 5 (Git Archaeology).
+    def clone_repository(self, url: str, target_dir: Path, depth: int = 200) -> Path:
+        """Clone a repository to target_dir with configurable history depth.
+
+        Args:
+            url: GitHub repository URL.
+            target_dir: Directory to clone into.
+            depth: Number of commits to fetch (default: 200 for git archaeology).
         """
         Repo.clone_from(
             url,
             str(target_dir),
-            depth=1,
-            single_branch=True,
+            depth=depth,
             no_checkout=False,
         )
         return target_dir

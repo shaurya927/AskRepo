@@ -1,5 +1,6 @@
 """Repository analysis orchestrator — coordinates cloning, scanning, parsing, and statistics."""
 
+import logging
 import shutil
 import uuid
 from datetime import datetime, timezone
@@ -9,6 +10,7 @@ from fastapi import UploadFile
 from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import get_settings
 from app.models.analysis_job import AnalysisJob
 from app.models.code_import import CodeImport
 from app.models.code_symbol import CodeSymbol
@@ -18,6 +20,8 @@ from app.models.repository_stats import RepositoryStats
 from app.services.repository.file_filter import FileFilter
 from app.services.repository.file_scanner import FileScanner
 from app.services.repository.github_service import GitHubService
+
+logger = logging.getLogger(__name__)
 from app.services.repository.zip_service import ZipService
 
 
@@ -101,7 +105,7 @@ class RepositoryAnalyzer:
                 await self._update_repo(repo_id, "analyzing")
                 github_svc = GitHubService()
                 clone_dir = target_dir / "repo"
-                github_svc.clone_repository(url, clone_dir)
+                github_svc.clone_repository(url, clone_dir, depth=self.settings.GIT_CLONE_DEPTH)
                 repo_dir = clone_dir
             elif file:
                 await self._update_job(job_id, "extracting", "Extracting ZIP archive...")
@@ -194,7 +198,106 @@ class RepositoryAnalyzer:
                 self.db.add(db_import)
             await self.db.flush()
 
-            # ── Step 10: Persist stats record ────────────────────
+            # ── Step 10: Build semantic embeddings ─────────────────
+            await self._update_job(job_id, "embedding", "Building code embeddings...")
+            try:
+                from app.services.embeddings.chunker import CodeChunker
+                from app.services.embeddings.embedding_service import get_embedding_service
+                from app.services.embeddings.vector_store import FAISSVectorStore
+
+                settings = get_settings()
+                chunker = CodeChunker()
+                symbol_chunks = chunker.chunk_symbols(
+                    parse_result.symbols, parse_result.imports, repo_dir, str(repo_id)
+                )
+                doc_chunks = chunker.chunk_documentation(
+                    repo_dir, str(repo_id), scan_result.files
+                )
+                all_chunks = symbol_chunks + doc_chunks
+
+                if all_chunks:
+                    embed_svc = get_embedding_service(
+                        model_name=settings.EMBEDDING_MODEL,
+                        batch_size=settings.EMBEDDING_BATCH_SIZE,
+                    )
+                    texts = [c.text for c in all_chunks]
+                    embeddings = embed_svc.embed_texts(texts)
+
+                    # ── Step 11: Build and save FAISS index ────────
+                    await self._update_job(job_id, "indexing", "Saving search index...")
+                    store = FAISSVectorStore()
+                    metadata_list = [
+                        {
+                            "file_path": c.file_path,
+                            "symbol_name": c.symbol_name,
+                            "symbol_type": c.symbol_type,
+                            "language": c.language,
+                            "start_line": c.start_line,
+                            "end_line": c.end_line,
+                            "chunk_type": c.chunk_type,
+                        }
+                        for c in all_chunks
+                    ]
+                    chunk_ids = [c.chunk_id for c in all_chunks]
+                    store.build_index(embeddings, texts, metadata_list, chunk_ids)
+
+                    index_dir = Path(settings.VECTOR_INDEX_PATH) / str(repo_id)
+                    store.save(index_dir)
+                    logger.info("Built FAISS index with %d chunks for repo %s", len(all_chunks), repo_id)
+                else:
+                    logger.info("No chunks to embed for repo %s", repo_id)
+            except Exception as e:
+                logger.warning("Embedding step failed (non-fatal): %s", e)
+
+            # ── Step 12: Git Archaeology (Phase 5) ─────────────────
+            try:
+                from app.services.git.git_analyzer import GitAnalyzer
+                from app.models.commit import Commit as CommitModel
+                from app.models.file_change import FileChange as FileChangeModel
+
+                await self._update_job(job_id, "analyzing", "Analyzing git history... (step 12/15)")
+                git_analyzer = GitAnalyzer(max_diff_size=self.settings.GIT_MAX_DIFF_SIZE)
+                git_result = git_analyzer.analyze_history(repo_dir, max_commits=self.settings.GIT_CLONE_DEPTH)
+
+                if git_result.has_history:
+                    # Step 13: Persist commits
+                    await self._update_job(job_id, "analyzing", "Persisting commit history... (step 13/15)")
+                    for cd in git_result.commits:
+                        commit_record = CommitModel(
+                            repository_id=repo_id,
+                            sha=cd.sha,
+                            message=cd.message[:5000],  # Truncate very long messages
+                            author_name=cd.author_name,
+                            author_email=cd.author_email,
+                            authored_date=cd.authored_date,
+                            committed_date=cd.committed_date,
+                            files_changed=cd.files_changed,
+                            insertions=cd.insertions,
+                            deletions=cd.deletions,
+                        )
+                        self.db.add(commit_record)
+
+                    for fc in git_result.file_changes:
+                        fc_record = FileChangeModel(
+                            repository_id=repo_id,
+                            commit_sha=fc.commit_sha,
+                            file_path=fc.file_path,
+                            change_type=fc.change_type,
+                            insertions=fc.insertions,
+                            deletions=fc.deletions,
+                            patch=fc.patch,
+                        )
+                        self.db.add(fc_record)
+
+                    await self.db.commit()
+                    logger.info("Persisted %d commits and %d file changes for repo %s",
+                                len(git_result.commits), len(git_result.file_changes), repo_id)
+                else:
+                    logger.info("No git history for repo %s (likely ZIP upload)", repo_id)
+            except Exception as e:
+                logger.warning("Git archaeology step failed (non-fatal): %s", e)
+
+            # ── Step 14: Persist stats record ────────────────────
             languages = scan_result.stats.get("languages", {})
             primary_lang = None
             if languages:
@@ -226,7 +329,7 @@ class RepositoryAnalyzer:
             self.db.add(repo_stats)
             await self.db.commit()
 
-            # ── Step 11: Mark as completed ───────────────────────
+            # ── Step 15: Mark as completed ───────────────────────
             await self._update_job(job_id, "completed", "Analysis complete")
             await self._update_repo(repo_id, "completed")
 

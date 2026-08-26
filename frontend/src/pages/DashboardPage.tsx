@@ -13,6 +13,10 @@ import FileList from '../components/FileList'
 import Badge from '../components/Badge'
 import SymbolList from '../components/SymbolList'
 import ComplexityChart from '../components/ComplexityChart'
+import ChatInterface from '../components/ChatInterface'
+import ArchitectureView from '../components/ArchitectureView'
+import DependencyGraph from '../components/DependencyGraph'
+import HistoryView from '../components/HistoryView'
 
 type TabType = 'overview' | 'files' | 'symbols' | 'architecture' | 'dependencies' | 'history' | 'chat'
 
@@ -296,11 +300,20 @@ const DashboardPage: React.FC = () => {
             </div>
           )}
 
-          {['architecture', 'dependencies', 'history', 'chat'].includes(activeTab) && (
-            <div className="flex flex-col items-center justify-center py-20 bg-gray-50 dark:bg-[#0d1117] border border-dashed border-gray-300 dark:border-[#30363d] rounded-lg">
-              <h3 className="text-xl font-medium text-gray-900 dark:text-[#e6edf3] mb-2 capitalize">{activeTab}</h3>
-              <p className="text-gray-500 dark:text-[#8b949e]">This feature is coming in a future phase.</p>
-            </div>
+          {activeTab === 'chat' && (
+            <ChatInterface repoId={repoId!} />
+          )}
+
+          {activeTab === 'architecture' && (
+            <ArchitectureView repoId={repoId!} />
+          )}
+
+          {activeTab === 'dependencies' && (
+            <DependencyGraph repoId={repoId!} />
+          )}
+
+          {activeTab === 'history' && (
+            <HistoryView repoId={repoId!} />
           )}
 
         </div>
