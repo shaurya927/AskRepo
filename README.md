@@ -1,149 +1,80 @@
 # AskRepo
 
-**Ask your codebase anything.**
+AskRepo is an AI-powered codebase intelligence tool that allows developers to understand, analyze, and interact with any repository in minutes. By providing a GitHub URL or uploading a ZIP file, developers can chat with an intelligent multi-agent system that understands the codebase architecture, file contents, git history, and code complexity.
 
-AI-powered codebase intelligence — understand any repository in minutes.
+## Features & Capabilities
 
----
+The project was developed in seven distinct phases, culminating in a robust, production-ready application:
 
-## Architecture
+*   **Repository Scanning (Phase 1):** Ingests codebases via GitHub URL cloning or ZIP upload. It scans directories, extracts metadata, identifies programming languages, and detects configuration and entry point files.
+*   **Code Parsing & Intelligence (Phase 2):** Utilizes Tree-sitter to parse source code into Abstract Syntax Trees (AST). It extracts classes, functions, methods, and imports, calculating complexity metrics (like Cyclomatic Complexity) for deeper code understanding.
+*   **AI Chat & RAG Pipeline (Phase 3):** Employs a Retrieval-Augmented Generation (RAG) pipeline. Code chunks and documentation are embedded and indexed using FAISS, allowing the LLM to answer natural language questions about the code accurately and with source citations.
+*   **Architecture Visualization (Phase 4):** Analyzes import statements to build a dependency graph using NetworkX. The frontend renders this interactive architecture diagram using React Flow, helping visualize module relationships and structural bottlenecks.
+*   **Git Archaeology (Phase 5):** Parses the repository's commit history to track file changes over time. It identifies code hotspots (frequently modified files) and provides a timeline of the repository's evolution.
+*   **Multi-Agent System (Phase 6):** Enhances the AI chat by routing user queries through an intelligent Orchestrator. Depending on the question, the query is delegated to specialized agents (e.g., Code Analyst, Architecture Analyst, Git Historian, Quality Analyst). Deterministic queries bypass the LLM entirely for faster, exact answers.
+*   **Production Hardening (Phase 7):** Secures the application for public deployment with IP-based rate limiting, asynchronous usage tracking, structured error handling, JSON logging, and a background workspace cleanup service.
 
-```
-                        ASKREPO
-                           │
-                           ▼
-                   React Frontend        ← Vite + TypeScript + Tailwind
-                           │
-                           ▼
-                      FastAPI API         ← Python + Pydantic + Uvicorn
-                           │
-          ┌────────────────┼────────────────┐
-          │                │                │
-          ▼                ▼                ▼
-     Repository        Analysis         AI Gateway
-      Service           Engine           (Phase 3+)
-          │                │
-          ▼                ▼
-      GitPython      Tree-sitter (Phase 2+)
-                          │
-               ┌──────────┴──────────┐
-               │                     │
-               ▼                     ▼
-         Vector Index          Dependency Graph
-         FAISS (Phase 3)       NetworkX (Phase 4)
-```
+## Architecture Overview
+
+AskRepo uses a modern web stack designed for scalability and performance:
+
+*   **Frontend:** Built with React, TypeScript, and Vite. The user interface is styled with Tailwind CSS, providing a responsive and accessible dashboard with specialized tabs for Files, Symbols, Architecture, Dependencies, Git History, and the AI Chat.
+*   **Backend:** Powered by Python and FastAPI. The backend handles asynchronous API requests, file processing, and agent orchestration.
+*   **Database:** PostgreSQL with SQLAlchemy and asyncpg for storing repository metadata, extracted symbols, git commits, and usage logs.
+*   **Vector Search:** FAISS (Facebook AI Similarity Search) is used for fast, local semantic search over code embeddings.
+*   **AI Provider:** Google Gemini API (via google-genai SDK) powers the underlying language models for reasoning and synthesis.
 
 ## Quick Start
 
 ### Prerequisites
 
-- [Docker](https://docs.docker.com/get-docker/) and Docker Compose
-- Or: Python 3.12+, Node 20+, PostgreSQL 16+
+*   Docker and Docker Compose
 
-### Option 1 — Docker (recommended)
+### Running with Docker (Recommended)
 
-```bash
-# 1. Copy environment config
-cp .env.example .env
+1.  Clone the repository and copy the environment configuration template:
+    ```bash
+    cp .env.example .env
+    ```
+2.  Add your Gemini API key to the `.env` file under `GOOGLE_API_KEY`.
+3.  Start all services (Frontend, Backend, and PostgreSQL) using Docker Compose:
+    ```bash
+    docker-compose up --build -d
+    ```
+4.  Access the application:
+    *   Frontend Dashboard: `http://localhost:5173`
+    *   Backend API Docs: `http://localhost:8000/docs`
 
-# 2. Start all services
-docker-compose up --build
+### Manual Local Setup
 
-# 3. Open the app
-#    Frontend → http://localhost:5173
-#    Backend  → http://localhost:8000
-#    API docs → http://localhost:8000/docs
-```
-
-### Option 2 — Manual
-
-```bash
-# 1. Copy environment config
-cp .env.example .env
-
-# 2. Start PostgreSQL (ensure it's running on port 5432)
-
-# 3. Backend
-cd backend
-python -m venv venv
-source venv/bin/activate   # or venv\Scripts\activate on Windows
-pip install -r requirements.txt
-uvicorn app.main:app --reload --port 8000
-
-# 4. Frontend
-cd frontend
-npm install
-npm run dev
-```
+1.  Start a local PostgreSQL instance (ensure it is running on port 5432).
+2.  Copy the `.env.example` file to `backend/.env` and configure your database URL and API keys.
+3.  Start the Backend:
+    ```bash
+    cd backend
+    python -m venv venv
+    source venv/bin/activate
+    pip install -r requirements.txt
+    uvicorn app.main:app --reload --port 8000
+    ```
+4.  Start the Frontend:
+    ```bash
+    cd frontend
+    npm install
+    npm run dev
+    ```
 
 ## Environment Variables
 
-See [`.env.example`](.env.example) for all configuration options.
+Key configurations found in `.env`:
 
-| Variable | Default | Description |
-|---|---|---|
-| `DATABASE_URL` | `postgresql+asyncpg://postgres:postgres@localhost:5432/askrepo` | PostgreSQL connection |
-| `GITHUB_TOKEN` | — | Optional GitHub token for higher API rate limits |
-| `MAX_REPOSITORY_SIZE_MB` | `50` | Max repository size to clone/extract |
-| `MAX_FILE_COUNT` | `2000` | Max files to process per repository |
-| `MAX_FILE_SIZE_MB` | `1` | Max individual file size |
-| `MAX_ANALYSES_PER_DAY` | `3` | Analysis limit per day |
-| `MAX_AI_REQUESTS_PER_DAY` | `20` | AI question limit per day |
-| `TEMP_REPOSITORY_PATH` | `./tmp/repos` | Temp storage for cloned/extracted repos |
-| `DEBUG` | `false` | Enable debug mode |
-
-## API Endpoints
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/health` | Health check |
-| `POST` | `/api/repositories` | Create repository (URL or ZIP upload) |
-| `GET` | `/api/repositories/{id}` | Get repository metadata |
-| `GET` | `/api/repositories/{id}/files` | List repository files |
-| `GET` | `/api/repositories/{id}/stats` | Get repository statistics |
-| `GET` | `/api/analyses/{id}` | Get analysis details |
-| `GET` | `/api/analyses/{id}/status` | Poll analysis status |
-
-## Project Structure
-
-```
-askrepo/
-├── frontend/           ← React + TypeScript + Vite
-│   ├── src/
-│   │   ├── components/ ← Reusable UI components
-│   │   ├── pages/      ← Route pages
-│   │   ├── hooks/      ← Custom React hooks
-│   │   ├── services/   ← API client
-│   │   ├── types/      ← TypeScript types
-│   │   └── utils/      ← Utility functions
-│   └── package.json
-│
-├── backend/            ← Python + FastAPI
-│   ├── app/
-│   │   ├── api/        ← API endpoints
-│   │   ├── core/       ← Config, DB, security
-│   │   ├── models/     ← SQLAlchemy models
-│   │   ├── schemas/    ← Pydantic schemas
-│   │   └── services/   ← Business logic
-│   │       └── repository/
-│   ├── tests/
-│   └── requirements.txt
-│
-├── docker-compose.yml
-├── .env.example
-└── README.md
-```
-
-## Development Phases
-
-- [x] **Phase 1** — Foundation (repo input, scanning, basic dashboard)
-- [ ] **Phase 2** — Code Intelligence (Tree-sitter, AST, symbols)
-- [ ] **Phase 3** — RAG (embeddings, FAISS, AI chat)
-- [ ] **Phase 4** — Architecture (NetworkX, React Flow)
-- [ ] **Phase 5** — Git Archaeology (commit history, diffs)
-- [ ] **Phase 6** — Multi-Agent (specialized reasoning agents)
-- [ ] **Phase 7** — Production Hardening (auth, rate limiting, deployment)
+*   `DATABASE_URL`: Connection string for PostgreSQL.
+*   `GOOGLE_API_KEY`: API key for Google Gemini models (Required for AI chat).
+*   `AI_MODEL`: The specific LLM model to use (default: `gemini-3.6-flash`).
+*   `GITHUB_TOKEN`: Optional token to increase GitHub cloning rate limits.
+*   `MAX_REPOSITORY_SIZE_MB`: Maximum size of repositories allowed for ingestion (default: 50MB).
+*   `MAX_AI_REQUESTS_PER_DAY`: Rate limit for AI chat queries per IP address.
 
 ## License
 
-MIT
+This project is licensed under the MIT License.
