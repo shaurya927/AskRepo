@@ -86,3 +86,25 @@ from app.middleware.usage_tracker import UsageTracker  # noqa: E402
 app.add_middleware(UsageTracker)
 
 app.include_router(api_router, prefix="/api")
+
+import os
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
+# Serve frontend static files if they exist (Production Docker Mode)
+if os.path.exists("static"):
+    app.mount("/assets", StaticFiles(directory="static/assets"), name="assets")
+    
+    @app.get("/{full_path:path}")
+    async def serve_frontend(full_path: str):
+        # Allow API routes to return 404 naturally
+        if full_path.startswith("api/"):
+            raise StarletteHTTPException(status_code=404, detail="Not Found")
+            
+        file_path = os.path.join("static", full_path)
+        if os.path.isfile(file_path):
+            return FileResponse(file_path)
+        
+        # SPA Fallback
+        return FileResponse("static/index.html")
