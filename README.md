@@ -1,80 +1,76 @@
 # AskRepo
 
-AskRepo is an AI-powered codebase intelligence tool that allows developers to understand, analyze, and interact with any repository in minutes. By providing a GitHub URL or uploading a ZIP file, developers can chat with an intelligent multi-agent system that understands the codebase architecture, file contents, git history, and code complexity.
+AskRepo is an AI-powered codebase intelligence tool that allows developers to understand, navigate, and analyze any GitHub repository in minutes. By providing a GitHub URL or uploading a ZIP file, AskRepo autonomously parses the codebase, maps its dependencies, and allows you to chat with an AI assistant that has deep, contextual knowledge of the code.
 
-## Features & Capabilities
+## Features
 
-The project was developed in seven distinct phases, culminating in a robust, production-ready application:
+* **Autonomous Code Parsing:** Extracts abstract syntax trees (ASTs) using Tree-sitter to index functions, classes, and file dependencies.
+* **Intelligent Chat Assistant:** Ask questions about the codebase architecture, logic, or specific functions. The AI automatically retrieves the relevant context using RAG (Retrieval-Augmented Generation).
+* **Architecture Visualization:** Automatically generates a dependency graph highlighting the architecture and relationships between files in the repository.
+* **Git History Analysis:** Analyzes the repository's commit history to identify hotspots and frequently modified files.
+* **Scalable Architecture:** Designed with FastAPI, PostgreSQL, and a modern React frontend.
 
-*   **Repository Scanning (Phase 1):** Ingests codebases via GitHub URL cloning or ZIP upload. It scans directories, extracts metadata, identifies programming languages, and detects configuration and entry point files.
-*   **Code Parsing & Intelligence (Phase 2):** Utilizes Tree-sitter to parse source code into Abstract Syntax Trees (AST). It extracts classes, functions, methods, and imports, calculating complexity metrics (like Cyclomatic Complexity) for deeper code understanding.
-*   **AI Chat & RAG Pipeline (Phase 3):** Employs a Retrieval-Augmented Generation (RAG) pipeline. Code chunks and documentation are embedded and indexed using FAISS, allowing the LLM to answer natural language questions about the code accurately and with source citations.
-*   **Architecture Visualization (Phase 4):** Analyzes import statements to build a dependency graph using NetworkX. The frontend renders this interactive architecture diagram using React Flow, helping visualize module relationships and structural bottlenecks.
-*   **Git Archaeology (Phase 5):** Parses the repository's commit history to track file changes over time. It identifies code hotspots (frequently modified files) and provides a timeline of the repository's evolution.
-*   **Multi-Agent System (Phase 6):** Enhances the AI chat by routing user queries through an intelligent Orchestrator. Depending on the question, the query is delegated to specialized agents (e.g., Code Analyst, Architecture Analyst, Git Historian, Quality Analyst). Deterministic queries bypass the LLM entirely for faster, exact answers.
-*   **Production Hardening (Phase 7):** Secures the application for public deployment with IP-based rate limiting, asynchronous usage tracking, structured error handling, JSON logging, and a background workspace cleanup service.
+## Tech Stack
 
-## Architecture Overview
+### Backend
+* **Python & FastAPI:** High-performance async API server.
+* **PostgreSQL & SQLAlchemy:** Relational database for storing repository metadata and analysis results.
+* **FAISS:** Vector database for semantic search and RAG capabilities.
+* **Google Gemini AI:** Powers the conversational agent and text embeddings.
+* **Tree-sitter:** Used for syntax-aware code parsing across multiple languages.
 
-AskRepo uses a modern web stack designed for scalability and performance:
+### Frontend
+* **React & TypeScript:** Strongly typed modern UI framework.
+* **Tailwind CSS:** Utility-first styling for a clean and responsive design.
+* **Framer Motion:** Smooth animations and transitions.
+* **Cytoscape.js:** Renders the interactive 2D dependency graph.
 
-*   **Frontend:** Built with React, TypeScript, and Vite. The user interface is styled with Tailwind CSS, providing a responsive and accessible dashboard with specialized tabs for Files, Symbols, Architecture, Dependencies, Git History, and the AI Chat.
-*   **Backend:** Powered by Python and FastAPI. The backend handles asynchronous API requests, file processing, and agent orchestration.
-*   **Database:** PostgreSQL with SQLAlchemy and asyncpg for storing repository metadata, extracted symbols, git commits, and usage logs.
-*   **Vector Search:** FAISS (Facebook AI Similarity Search) is used for fast, local semantic search over code embeddings.
-*   **AI Provider:** Google Gemini API (via google-genai SDK) powers the underlying language models for reasoning and synthesis.
+## Deployment
 
-## Quick Start
+AskRepo is designed to be deployed as a unified Docker container, making it easy to host the entire application on platforms like Render.
 
-### Prerequisites
+### Prerequisites for Deployment
+1. A free PostgreSQL database (e.g., Neon.tech).
+2. A Google Gemini API Key.
+3. A GitHub Personal Access Token (for bypassing unauthenticated rate limits).
 
-*   Docker and Docker Compose
+### Deploying to Render
+1. Create a new **Web Service** on [Render](https://render.com).
+2. Connect your GitHub repository.
+3. Set the Environment to **Docker**.
+4. Add the following Environment Variables:
+   - `DATABASE_URL`: Your PostgreSQL connection string (must use `postgresql+asyncpg://`).
+   - `GOOGLE_API_KEY`: Your Gemini API key.
+   - `GITHUB_TOKEN`: Your GitHub token.
+   - `MAX_REPOSITORY_SIZE_MB`: (Optional) Set to `500` to allow larger repositories.
+5. Deploy the service. Render will automatically build the frontend, package it with the FastAPI backend, and serve it on a single URL.
 
-### Running with Docker (Recommended)
+## Local Development
 
-1.  Clone the repository and copy the environment configuration template:
-    ```bash
-    cp .env.example .env
-    ```
-2.  Add your Gemini API key to the `.env` file under `GOOGLE_API_KEY`.
-3.  Start all services (Frontend, Backend, and PostgreSQL) using Docker Compose:
-    ```bash
-    docker-compose up --build -d
-    ```
-4.  Access the application:
-    *   Frontend Dashboard: `http://localhost:5173`
-    *   Backend API Docs: `http://localhost:8000/docs`
+### Backend Setup
+1. Navigate to the `backend` directory.
+2. Create a virtual environment and install dependencies:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+   pip install -r requirements.txt
+   ```
+3. Create a `.env` file based on `.env.example`.
+4. Run the development server:
+   ```bash
+   uvicorn app.main:app --reload
+   ```
 
-### Manual Local Setup
-
-1.  Start a local PostgreSQL instance (ensure it is running on port 5432).
-2.  Copy the `.env.example` file to `backend/.env` and configure your database URL and API keys.
-3.  Start the Backend:
-    ```bash
-    cd backend
-    python -m venv venv
-    source venv/bin/activate
-    pip install -r requirements.txt
-    uvicorn app.main:app --reload --port 8000
-    ```
-4.  Start the Frontend:
-    ```bash
-    cd frontend
-    npm install
-    npm run dev
-    ```
-
-## Environment Variables
-
-Key configurations found in `.env`:
-
-*   `DATABASE_URL`: Connection string for PostgreSQL.
-*   `GOOGLE_API_KEY`: API key for Google Gemini models (Required for AI chat).
-*   `AI_MODEL`: The specific LLM model to use (default: `gemini-3.6-flash`).
-*   `GITHUB_TOKEN`: Optional token to increase GitHub cloning rate limits.
-*   `MAX_REPOSITORY_SIZE_MB`: Maximum size of repositories allowed for ingestion (default: 50MB).
-*   `MAX_AI_REQUESTS_PER_DAY`: Rate limit for AI chat queries per IP address.
+### Frontend Setup
+1. Navigate to the `frontend` directory.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
 
 ## License
-
-This project is licensed under the MIT License.
+MIT License
