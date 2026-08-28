@@ -85,10 +85,10 @@ class GitAnalyzer:
             # Extract commit metadata
             authored = commit.authored_datetime
             if authored.tzinfo is None:
-                authored = authored.replace(tzinfo=timezone.utc)
+                authored = authored.replace(tzinfo=None)
             committed = commit.committed_datetime
             if committed.tzinfo is None:
-                committed = committed.replace(tzinfo=timezone.utc)
+                committed = committed.replace(tzinfo=None)
 
             cd = CommitData(
                 sha=commit.hexsha,

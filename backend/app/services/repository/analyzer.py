@@ -55,12 +55,12 @@ class RepositoryAnalyzer:
             "status": status,
             "progress_detail": progress,
             "error_message": error,
-            "updated_at": datetime.now(timezone.utc),
+            "updated_at": datetime.now(),
         }
         if status in ("cloning", "extracting"):
-            values["started_at"] = datetime.now(timezone.utc)
+            values["started_at"] = datetime.now()
         if status in ("completed", "failed"):
-            values["completed_at"] = datetime.now(timezone.utc)
+            values["completed_at"] = datetime.now()
 
         stmt = update(AnalysisJob).where(AnalysisJob.id == job_id).values(**values)
         await self.db.execute(stmt)
@@ -79,7 +79,7 @@ class RepositoryAnalyzer:
             .values(
                 status=status,
                 error_message=error,
-                updated_at=datetime.now(timezone.utc),
+                updated_at=datetime.now(),
             )
         )
         await self.db.execute(stmt)
