@@ -50,6 +50,8 @@ class GitHubService:
             )
             if resp.status_code == 404:
                 raise ValueError("Repository not found or is private")
+            if resp.status_code == 401:
+                raise ValueError("GitHub Token is invalid or expired. Please check your GITHUB_TOKEN.")
             if resp.status_code == 403:
                 raise ValueError("GitHub API rate limit exceeded. Try adding a GITHUB_TOKEN.")
             resp.raise_for_status()
