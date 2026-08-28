@@ -29,15 +29,20 @@ class RAGRetriever:
         self.embedding_service = embedding_service
         self.vector_store = vector_store
 
-    def retrieve(
+    async def retrieve(
         self,
         query: str,
         category: str,
         top_k: int = 15,
     ) -> list[RetrievedContext]:
-        """Retrieve relevant contexts using category-specific strategy."""
-        query_embedding = self.embedding_service.embed_query(query)
-        results = self.vector_store.search(query_embedding, top_k=self._get_top_k(category, top_k))
+        """Retrieve relevant contexts using category-specific strategy (async to prevent blocking)."""
+        import asyncio
+        
+        def _blocking_retrieve():
+            query_embedding = self.embedding_service.embed_query(query)
+            return self.vector_store.search(query_embedding, top_k=self._get_top_k(category, top_k))
+            
+        results = await asyncio.to_thread(_blocking_retrieve)
 
         # Apply category-specific filtering/reranking
         if category == "code":

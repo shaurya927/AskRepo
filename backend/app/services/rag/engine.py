@@ -131,7 +131,7 @@ class RAGEngine:
         category = classify_query(question)
 
         # 2 & 3. Retrieve
-        contexts = self.retriever.retrieve(
+        contexts = await self.retriever.retrieve(
             query=question,
             category=category,
             top_k=self.settings.VECTOR_SEARCH_TOP_K,
@@ -202,7 +202,7 @@ class RAGEngine:
         # Fall back to streaming pipeline
         category = classify_query(question)
 
-        contexts = self.retriever.retrieve(
+        contexts = await self.retriever.retrieve(
             query=question,
             category=category,
             top_k=self.settings.VECTOR_SEARCH_TOP_K,

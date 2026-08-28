@@ -34,7 +34,7 @@ class CodeAgent(BaseAgent):
             )
 
         # Retrieve code-focused contexts
-        contexts = retriever.retrieve(query=query, category="code", top_k=10)
+        contexts = await retriever.retrieve(query=query, category="code", top_k=10)
         if not contexts:
             return AgentResult(
                 agent_name=self.name,

@@ -85,7 +85,7 @@ class ArchitectureAgent(BaseAgent):
         rag_context = ""
         sources = []
         if retriever:
-            contexts = retriever.retrieve(query=query, category="architecture", top_k=8)
+            contexts = await retriever.retrieve(query=query, category="architecture", top_k=8)
             rag_context = "\n\n".join(
                 f"=== {c.file_path} (lines {c.start_line}-{c.end_line}) ===\n{c.text}"
                 for c in contexts

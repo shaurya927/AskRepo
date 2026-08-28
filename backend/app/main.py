@@ -24,6 +24,22 @@ async def lifespan(app: FastAPI):
 
     await init_db()
 
+    # Preload the embedding model in a separate thread so it doesn't block startup too much,
+    # but gets loaded before the user makes a query
+    import asyncio
+    from app.services.embeddings.embedding_service import get_embedding_service
+    
+    async def _preload():
+        logger.info("Preloading embedding model...")
+        try:
+            emb_service = get_embedding_service()
+            await asyncio.to_thread(emb_service._load_model)
+            logger.info("Embedding model preloaded successfully")
+        except Exception as e:
+            logger.error("Failed to preload embedding model: %s", e)
+            
+    asyncio.create_task(_preload())
+
     # Clean up any orphaned temp directories from previous runs
     cleaned = cleanup_stale_workspaces(settings.TEMP_REPOSITORY_PATH, settings.CLEANUP_MAX_AGE_HOURS)
     if cleaned:
