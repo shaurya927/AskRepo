@@ -125,7 +125,17 @@ export const sendChatMessage = async (
     message,
     api_key: apiKey || undefined,
   }, { signal })
-  return response.data
+  
+  const data = response.data as ChatResponse
+  
+  if (response.headers['x-ratelimit-limit'] && response.headers['x-ratelimit-remaining']) {
+    data.rate_limit = {
+      limit: parseInt(response.headers['x-ratelimit-limit'], 10),
+      remaining: parseInt(response.headers['x-ratelimit-remaining'], 10),
+    }
+  }
+  
+  return data
 }
 
 export const getChatHistory = async (

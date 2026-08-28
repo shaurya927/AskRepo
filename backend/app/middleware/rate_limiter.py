@@ -94,4 +94,15 @@ class RateLimiter(BaseHTTPMiddleware):
                 )
             window.add()
 
-        return await call_next(request)
+        response = await call_next(request)
+        
+        # Inject rate limit headers for AI chat
+        if method == "POST" and ("/chat" in path and "/repositories/" in path):
+            window = self._limits[client_ip]["ai_chat"]
+            count = window.count_in_window(self.WINDOW)
+            remaining = max(0, self.max_ai_requests - count)
+            response.headers["X-RateLimit-Limit"] = str(self.max_ai_requests)
+            response.headers["X-RateLimit-Remaining"] = str(remaining)
+            response.headers["X-RateLimit-Reset"] = str(window.seconds_until_next(self.WINDOW))
+
+        return response

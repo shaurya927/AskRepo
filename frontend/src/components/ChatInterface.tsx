@@ -21,6 +21,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ repoId }) => {
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isLoadingHistory, setIsLoadingHistory] = useState(true)
+  const [rateLimit, setRateLimit] = useState<{ limit: number, remaining: number } | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [thinkStartTime, setThinkStartTime] = useState<number | null>(null)
   const [thinkDuration, setThinkDuration] = useState(0)
@@ -108,6 +109,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ repoId }) => {
 
     try {
       const response = await sendChatMessage(repoId, msg, undefined, abortControllerRef.current.signal)
+      if (response.rate_limit) {
+        setRateLimit(response.rate_limit)
+      }
       const assistantMsg: ChatMessageType = {
         id: response.id,
         role: 'assistant',
@@ -352,10 +356,18 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ repoId }) => {
               )}
             </div>
           </div>
-          <div className="text-center mt-2 mb-1">
-            <p className="text-[11px] text-gray-500 dark:text-[#6e7681]">
+          <div className="grid grid-cols-3 items-center mt-2 mb-1 px-2 text-[11px] text-gray-500 dark:text-[#6e7681]">
+            <div></div>
+            <p className="text-center whitespace-nowrap">
               AI can make mistakes. Please verify important information.
             </p>
+            <div className="text-right">
+              {rateLimit && (
+                <span title={`${rateLimit.remaining} / ${rateLimit.limit} requests remaining today`} className={rateLimit.remaining === 0 ? 'text-red-500' : ''}>
+                  API Limit: {Math.round((rateLimit.remaining / rateLimit.limit) * 100)}%
+                </span>
+              )}
+            </div>
           </div>
         </div>
       </div>

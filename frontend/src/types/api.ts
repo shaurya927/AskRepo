@@ -134,6 +134,7 @@ export interface ChatResponse {
   sources: SourceReference[]
   query_category: string
   model_used: string
+  rate_limit?: { limit: number; remaining: number }
 }
 
 export interface ChatMessage {
