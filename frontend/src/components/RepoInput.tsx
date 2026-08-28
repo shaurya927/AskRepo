@@ -40,14 +40,14 @@ const RepoInput: React.FC<RepoInputProps> = ({ onSubmit, isLoading }) => {
             }}
             placeholder="https://github.com/user/repository"
             className={`flex-1 px-4 py-2 rounded-md border bg-transparent text-gray-900 dark:text-[#e6edf3] focus:outline-none focus:ring-1 focus:border-[#58a6ff] ${
-              error ? 'border-[#f85149]' : 'border-gray-300 dark:border-[#30363d]'
+              error ? 'border-[#f85149]' : 'border-gray-300 dark:border-[#27272a]'
             }`}
             disabled={isLoading}
           />
           <button
             type="submit"
             disabled={isLoading || !url}
-            className="px-6 py-2 rounded-md bg-[#238636] hover:bg-[#2ea043] text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[100px] transition-colors"
+            className="px-6 py-2 rounded-md bg-gray-900 hover:bg-gray-800 dark:bg-[#e6edf3] dark:hover:bg-white text-white dark:text-black font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[100px] transition-colors"
           >
             {isLoading ? <Loader2 size={20} className="animate-spin" /> : 'Analyze'}
           </button>

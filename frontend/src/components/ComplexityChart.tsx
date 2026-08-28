@@ -30,7 +30,7 @@ const ComplexityChart: React.FC<ComplexityChartProps> = ({ distribution }) => {
   return (
     <div className="space-y-3">
       {/* Stacked bar */}
-      <div className="w-full h-4 rounded-full overflow-hidden flex bg-gray-200 dark:bg-[#21262d]">
+      <div className="w-full h-4 rounded-full overflow-hidden flex bg-gray-200 dark:bg-[#18181b]">
         {SEGMENTS.map(({ key, color }) => {
           const value = distribution[key as keyof typeof distribution]
           const pct = (value / total) * 100

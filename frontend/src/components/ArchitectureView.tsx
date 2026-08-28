@@ -73,8 +73,8 @@ const ArchitectureView: React.FC<ArchitectureViewProps> = ({ repoId }) => {
 
   if (!data || data.summary.categories.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 bg-gray-50 dark:bg-[#0d1117] border border-dashed border-gray-200 dark:border-[#30363d] rounded-lg">
-        <FolderTree size={48} className="text-gray-300 dark:text-[#30363d] mb-4" />
+      <div className="flex flex-col items-center justify-center py-20 bg-gray-50 dark:bg-[#000000] border border-dashed border-gray-200 dark:border-[#27272a] rounded-lg">
+        <FolderTree size={48} className="text-gray-300 dark:text-[#27272a] mb-4" />
         <p className="text-gray-500 dark:text-[#8b949e]">No architecture data available.</p>
       </div>
     )
@@ -86,9 +86,9 @@ const ArchitectureView: React.FC<ArchitectureViewProps> = ({ repoId }) => {
   return (
     <div className="space-y-6">
       {/* Distribution Bar */}
-      <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg p-4">
+      <div className="bg-white dark:bg-[#111111] border border-gray-200 dark:border-[#27272a] rounded-lg p-4">
         <h3 className="text-sm font-medium text-gray-900 dark:text-[#e6edf3] mb-3">Architecture Distribution</h3>
-        <div className="flex h-6 rounded-md overflow-hidden border border-gray-200 dark:border-[#30363d]">
+        <div className="flex h-6 rounded-md overflow-hidden border border-gray-200 dark:border-[#27272a]">
           {categories.map(cat => (
             <div
               key={cat.name}
@@ -118,19 +118,19 @@ const ArchitectureView: React.FC<ArchitectureViewProps> = ({ repoId }) => {
 
       {/* Summary Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg p-3">
+        <div className="bg-white dark:bg-[#111111] border border-gray-200 dark:border-[#27272a] rounded-lg p-3">
           <p className="text-xs text-gray-500 dark:text-[#8b949e]">Total Classified</p>
           <p className="text-xl font-semibold text-gray-900 dark:text-[#e6edf3]">{totalFiles}</p>
         </div>
-        <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg p-3">
+        <div className="bg-white dark:bg-[#111111] border border-gray-200 dark:border-[#27272a] rounded-lg p-3">
           <p className="text-xs text-gray-500 dark:text-[#8b949e]">Categories</p>
           <p className="text-xl font-semibold text-gray-900 dark:text-[#e6edf3]">{categories.length}</p>
         </div>
-        <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg p-3">
+        <div className="bg-white dark:bg-[#111111] border border-gray-200 dark:border-[#27272a] rounded-lg p-3">
           <p className="text-xs text-gray-500 dark:text-[#8b949e]">Largest Layer</p>
           <p className="text-xl font-semibold text-gray-900 dark:text-[#e6edf3] capitalize">{categories[0]?.name || '-'}</p>
         </div>
-        <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg p-3">
+        <div className="bg-white dark:bg-[#111111] border border-gray-200 dark:border-[#27272a] rounded-lg p-3">
           <p className="text-xs text-gray-500 dark:text-[#8b949e]">Largest Count</p>
           <p className="text-xl font-semibold text-gray-900 dark:text-[#e6edf3]">{categories[0]?.file_count || 0}</p>
         </div>
@@ -144,17 +144,17 @@ const ArchitectureView: React.FC<ArchitectureViewProps> = ({ repoId }) => {
           const displayFiles = isExpanded ? allFiles : allFiles.slice(0, 5)
 
           return (
-            <div key={cat.name} className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg overflow-hidden shadow-sm">
-              <div className="flex items-center justify-between p-3 border-b border-gray-100 dark:border-[#30363d]">
+            <div key={cat.name} className="bg-white dark:bg-[#111111] border border-gray-200 dark:border-[#27272a] rounded-lg overflow-hidden shadow-sm">
+              <div className="flex items-center justify-between p-3 border-b border-gray-100 dark:border-[#27272a]">
                 <div className="flex items-center gap-2">
                   <span className="text-base">{CATEGORY_ICONS[cat.name] || '📁'}</span>
                   <span className="text-sm font-medium text-gray-900 dark:text-[#e6edf3] capitalize">{cat.name}</span>
-                  <span className="text-xs px-1.5 py-0.5 bg-gray-100 dark:bg-[#21262d] border border-gray-200 dark:border-[#30363d] rounded text-gray-500 dark:text-[#8b949e]">
+                  <span className="text-xs px-1.5 py-0.5 bg-gray-100 dark:bg-[#18181b] border border-gray-200 dark:border-[#27272a] rounded text-gray-500 dark:text-[#8b949e]">
                     {cat.file_count}
                   </span>
                 </div>
                 <div
-                  className="w-16 h-1.5 rounded-full bg-gray-100 dark:bg-[#21262d] overflow-hidden"
+                  className="w-16 h-1.5 rounded-full bg-gray-100 dark:bg-[#18181b] overflow-hidden"
                 >
                   <div
                     className="h-full rounded-full"

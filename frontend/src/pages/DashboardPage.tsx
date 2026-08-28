@@ -6,6 +6,7 @@ import {
   LayoutDashboard, FolderTree, History, MessageSquare, Layers, Network,
   Terminal, GitBranch as GithubIcon, ChevronDown, ChevronRight
 } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import ThemeToggle from '../components/ThemeToggle'
 import { getRepository, getRepositoryStats, getRepositoryFiles } from '../services/api'
@@ -98,9 +99,9 @@ const DashboardPage: React.FC = () => {
   ]
 
   return (
-    <div className="absolute inset-0 flex overflow-hidden bg-white dark:bg-[#0d1117]">
+    <div className="absolute inset-0 flex overflow-hidden bg-white dark:bg-[#000000]">
       {/* Sidebar */}
-      <div className="w-64 flex-shrink-0 bg-gray-50/50 dark:bg-[#161b22]/50 flex flex-col overflow-hidden">
+      <div className="w-64 flex-shrink-0 bg-gray-50/50 dark:bg-[#111111]/50 flex flex-col overflow-hidden">
         
         {/* App Branding */}
         <div className="p-4 flex items-center gap-2 text-gray-900 dark:text-[#e6edf3]">
@@ -128,7 +129,7 @@ const DashboardPage: React.FC = () => {
           </button>
           <button
             onClick={() => setIsNavExpanded(!isNavExpanded)}
-            className="p-1 ml-2 rounded-md text-gray-400 dark:text-[#8b949e] hover:bg-gray-200 dark:hover:bg-[#30363d] hover:text-gray-900 dark:hover:text-[#e6edf3] transition-colors flex-shrink-0"
+            className="p-1 ml-2 rounded-md text-gray-400 dark:text-[#8b949e] hover:bg-gray-200 dark:hover:bg-[#27272a] hover:text-gray-900 dark:hover:text-[#e6edf3] transition-colors flex-shrink-0"
             title={isNavExpanded ? "Collapse Navigation" : "Expand Navigation"}
           >
             {isNavExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
@@ -145,8 +146,8 @@ const DashboardPage: React.FC = () => {
                 onClick={() => setActiveTab(tab.id)}
                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                   activeTab === tab.id
-                    ? 'bg-white dark:bg-[#21262d] text-gray-900 dark:text-[#58a6ff] shadow-sm'
-                    : 'text-gray-600 dark:text-[#8b949e] hover:bg-white/60 dark:hover:bg-[#21262d]/60 hover:text-gray-900 dark:hover:text-[#c9d1d9]'
+                    ? 'bg-white dark:bg-[#18181b] text-gray-900 dark:text-[#58a6ff] shadow-sm'
+                    : 'text-gray-600 dark:text-[#8b949e] hover:bg-white/60 dark:hover:bg-[#18181b]/60 hover:text-gray-900 dark:hover:text-[#c9d1d9]'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -157,7 +158,7 @@ const DashboardPage: React.FC = () => {
                   <span className={`px-2 py-0.5 rounded-full text-[11px] ${
                     activeTab === tab.id
                       ? 'bg-gray-100 dark:bg-[#1f6feb]/20 text-gray-900 dark:text-[#58a6ff]'
-                      : 'bg-gray-200/50 dark:bg-[#0d1117] text-gray-500 dark:text-[#8b949e]'
+                      : 'bg-gray-200/50 dark:bg-[#000000] text-gray-500 dark:text-[#8b949e]'
                   }`}>
                     {formatNumber(tab.count)}
                   </span>
@@ -173,7 +174,7 @@ const DashboardPage: React.FC = () => {
               href="https://github.com/shaurya927/AskRepo"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-1.5 rounded-lg text-gray-500 dark:text-[#8b949e] hover:bg-white/60 dark:hover:bg-[#21262d]/60 hover:text-gray-900 dark:hover:text-[#e6edf3] transition-colors flex items-center gap-2 text-sm font-medium"
+              className="p-1.5 rounded-lg text-gray-500 dark:text-[#8b949e] hover:bg-white/60 dark:hover:bg-[#18181b]/60 hover:text-gray-900 dark:hover:text-[#e6edf3] transition-colors flex items-center gap-2 text-sm font-medium"
             >
               <GithubIcon size={18} />
               <span>GitHub</span>
@@ -183,11 +184,18 @@ const DashboardPage: React.FC = () => {
         </div>
 
         {/* Main Content */}
-        <div className={`flex-1 relative bg-white dark:bg-[#0d1117] flex flex-col ${(activeTab === 'chat' || activeTab === 'dependencies') ? 'overflow-hidden' : 'p-6 overflow-y-auto'}`}>
-          <div className={(activeTab === 'chat' || activeTab === 'dependencies') ? 'flex-1 h-full' : 'max-w-7xl mx-auto w-full'}>
-
-          {activeTab === 'overview' && (
-            <div className="space-y-6">
+        <div className={`flex-1 relative bg-white dark:bg-[#000000] flex flex-col ${(activeTab === 'chat' || activeTab === 'dependencies') ? 'overflow-hidden' : 'p-6 overflow-y-auto'}`}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.15, ease: 'easeOut' }}
+              className={(activeTab === 'chat' || activeTab === 'dependencies') ? 'flex-1 h-full' : 'max-w-7xl mx-auto w-full'}
+            >
+            {activeTab === 'overview' && (
+              <div className="space-y-6">
               {/* File stats */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatsCard icon={FileText} label="Total Files" value={formatNumber(stats.total_files)} subtitle={`Size: ${formatBytes(stats.total_size)}`} />
@@ -207,7 +215,7 @@ const DashboardPage: React.FC = () => {
               )}
 
               {/* Languages */}
-              <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg p-6">
+              <div className="bg-white dark:bg-[#111111] border border-gray-200 dark:border-[#27272a] rounded-lg p-6">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-[#e6edf3] mb-4">Languages</h3>
                 <LanguageBar languages={stats.languages} totalLines={stats.total_lines} />
               </div>
@@ -215,7 +223,7 @@ const DashboardPage: React.FC = () => {
               {/* Complexity + Dependencies */}
               {totalSymbols > 0 && (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg p-6">
+                  <div className="bg-white dark:bg-[#111111] border border-gray-200 dark:border-[#27272a] rounded-lg p-6">
                     <h3 className="text-lg font-medium text-gray-900 dark:text-[#e6edf3] mb-4">Complexity Distribution</h3>
                     <ComplexityChart
                       distribution={{
@@ -227,7 +235,7 @@ const DashboardPage: React.FC = () => {
                     />
                   </div>
 
-                  <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg p-6 space-y-4">
+                  <div className="bg-white dark:bg-[#111111] border border-gray-200 dark:border-[#27272a] rounded-lg p-6 space-y-4">
                     <h3 className="text-lg font-medium text-gray-900 dark:text-[#e6edf3] mb-4">Dependencies</h3>
                     <div className="flex items-center justify-between py-2">
                       <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-[#8b949e]">
@@ -249,7 +257,7 @@ const DashboardPage: React.FC = () => {
 
               {/* Entry points, config, frameworks */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg p-6 space-y-6">
+                <div className="bg-white dark:bg-[#111111] border border-gray-200 dark:border-[#27272a] rounded-lg p-6 space-y-6">
                   <div>
                     <h3 className="text-sm font-medium text-gray-500 dark:text-[#8b949e] flex items-center gap-2 mb-3">
                       <Play size={16} /> Entry Points
@@ -257,7 +265,7 @@ const DashboardPage: React.FC = () => {
                     {stats.entry_points.length > 0 ? (
                       <ul className="space-y-2">
                         {stats.entry_points.map((file, i) => (
-                          <li key={i} className="text-sm font-mono text-gray-700 dark:text-[#c9d1d9] bg-gray-50 dark:bg-[#0d1117] px-3 py-2 rounded-md border border-gray-100 dark:border-[#30363d]">
+                          <li key={i} className="text-sm font-mono text-gray-700 dark:text-[#c9d1d9] bg-gray-50 dark:bg-[#000000] px-3 py-2 rounded-md border border-gray-100 dark:border-[#27272a]">
                             {file}
                           </li>
                         ))}
@@ -283,7 +291,7 @@ const DashboardPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg p-6 space-y-6">
+                <div className="bg-white dark:bg-[#111111] border border-gray-200 dark:border-[#27272a] rounded-lg p-6 space-y-6">
                   <div>
                     <h3 className="text-sm font-medium text-gray-500 dark:text-[#8b949e] mb-3">Frameworks & Tools</h3>
                     {stats.frameworks.length > 0 ? (
@@ -361,7 +369,8 @@ const DashboardPage: React.FC = () => {
             <HistoryView repoId={repoId!} />
           )}
 
-        </div>
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   )

@@ -26,13 +26,13 @@ interface DependencyGraphProps {
 function FileNode({ data, selected }: NodeProps) {
   return (
     <div
-      className={`px-3 py-2 rounded-lg border transition-all bg-white dark:bg-[#161b22] ${
+      className={`px-3 py-2 rounded-lg border transition-all bg-white dark:bg-[#111111] ${
         selected
           ? 'border-blue-500 shadow-lg shadow-blue-500/20 dark:border-[#58a6ff] dark:shadow-blue-900/20'
-          : 'border-gray-200 dark:border-[#30363d] hover:border-gray-300 dark:hover:border-[#484f58]'
+          : 'border-gray-200 dark:border-[#27272a] hover:border-gray-300 dark:hover:border-[#484f58]'
       } min-w-[120px]`}
     >
-      <Handle type="target" position={Position.Top} className="!bg-gray-400 dark:!bg-[#30363d] !w-2 !h-2" />
+      <Handle type="target" position={Position.Top} className="!bg-gray-400 dark:!bg-[#27272a] !w-2 !h-2" />
       <div className="flex items-center gap-2">
         <div
           className="w-2.5 h-2.5 rounded-full flex-shrink-0"
@@ -47,7 +47,7 @@ function FileNode({ data, selected }: NodeProps) {
           {(data as any).symbolCount} {(data as any).nodeType === 'module' ? 'files' : 'symbols'}
         </div>
       )}
-      <Handle type="source" position={Position.Bottom} className="!bg-gray-400 dark:!bg-[#30363d] !w-2 !h-2" />
+      <Handle type="source" position={Position.Bottom} className="!bg-gray-400 dark:!bg-[#27272a] !w-2 !h-2" />
     </div>
   )
 }
@@ -83,7 +83,7 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ repoId }) => {
         setNodes(data.nodes as unknown as Node[])
         setEdges(data.edges.map(e => ({
           ...e,
-          style: { stroke: isDark ? '#30363d' : '#e5e7eb', strokeWidth: 1.5 },
+          style: { stroke: isDark ? '#27272a' : '#e5e7eb', strokeWidth: 1.5 },
           markerEnd: { type: 'arrowclosed' as any, color: isDark ? '#484f58' : '#9ca3af', width: 14, height: 14 },
         })) as unknown as Edge[])
       } catch {
@@ -142,22 +142,22 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ repoId }) => {
   if (nodes.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full">
-        <Layers size={48} className="text-gray-300 dark:text-[#30363d] mb-4" />
+        <Layers size={48} className="text-gray-300 dark:text-[#27272a] mb-4" />
         <p className="text-gray-500 dark:text-[#8b949e]">No dependency data available for this repository.</p>
       </div>
     )
   }
 
   return (
-    <div className="relative h-full w-full bg-white dark:bg-[#0d1117] overflow-hidden">
+    <div className="relative h-full w-full bg-white dark:bg-[#000000] overflow-hidden">
       {/* Toolbar */}
       <div className="absolute top-3 left-3 z-10 flex items-center gap-2">
-        <div className="flex bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg overflow-hidden shadow-sm">
+        <div className="flex bg-white dark:bg-[#111111] border border-gray-200 dark:border-[#27272a] rounded-lg overflow-hidden shadow-sm">
           <button
             onClick={() => setLevel('file')}
             className={`px-3 py-1.5 text-xs font-medium transition-colors ${
               level === 'file'
-                ? 'bg-gray-100 dark:bg-[#21262d] text-gray-900 dark:text-[#e6edf3]'
+                ? 'bg-gray-100 dark:bg-[#18181b] text-gray-900 dark:text-[#e6edf3]'
                 : 'text-gray-500 dark:text-[#8b949e] hover:text-gray-900 dark:hover:text-[#e6edf3]'
             }`}
           >
@@ -167,7 +167,7 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ repoId }) => {
             onClick={() => setLevel('module')}
             className={`px-3 py-1.5 text-xs font-medium transition-colors ${
               level === 'module'
-                ? 'bg-gray-100 dark:bg-[#21262d] text-gray-900 dark:text-[#e6edf3]'
+                ? 'bg-gray-100 dark:bg-[#18181b] text-gray-900 dark:text-[#e6edf3]'
                 : 'text-gray-500 dark:text-[#8b949e] hover:text-gray-900 dark:hover:text-[#e6edf3]'
             }`}
           >
@@ -182,11 +182,11 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ repoId }) => {
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="Search nodes..."
-            className="pl-8 pr-3 py-1.5 text-xs bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg text-gray-900 dark:text-[#e6edf3] placeholder-gray-400 dark:placeholder-[#6e7681] w-48 focus:border-blue-500 dark:focus:border-[#58a6ff] outline-none"
+            className="pl-8 pr-3 py-1.5 text-xs bg-white dark:bg-[#111111] border border-gray-200 dark:border-[#27272a] rounded-lg text-gray-900 dark:text-[#e6edf3] placeholder-gray-400 dark:placeholder-[#6e7681] w-48 focus:border-blue-500 dark:focus:border-[#58a6ff] outline-none"
           />
         </div>
 
-        <span className="text-xs text-gray-500 dark:text-[#6e7681] bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg px-2 py-1.5 shadow-sm">
+        <span className="text-xs text-gray-500 dark:text-[#6e7681] bg-white dark:bg-[#111111] border border-gray-200 dark:border-[#27272a] rounded-lg px-2 py-1.5 shadow-sm">
           {nodes.length} nodes · {edges.length} edges
         </span>
       </div>
@@ -204,18 +204,18 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ repoId }) => {
         maxZoom={2}
         defaultEdgeOptions={{ type: 'smoothstep' }}
       >
-        <Controls className="!bg-white dark:!bg-[#161b22] !border-gray-200 dark:!border-[#30363d] [&>button]:!bg-white dark:[&>button]:!bg-[#161b22] [&>button]:!border-gray-200 dark:[&>button]:!border-[#30363d] [&>button]:!text-gray-500 dark:[&>button]:!text-[#8b949e] [&>button:hover]:!bg-gray-50 dark:[&>button:hover]:!bg-[#21262d]" />
-        <Background color={isDark ? '#21262d' : '#e5e7eb'} variant={BackgroundVariant.Dots} gap={20} size={1} />
+        <Controls className="!bg-white dark:!bg-[#111111] !border-gray-200 dark:!border-[#27272a] [&>button]:!bg-white dark:[&>button]:!bg-[#111111] [&>button]:!border-gray-200 dark:[&>button]:!border-[#27272a] [&>button]:!text-gray-500 dark:[&>button]:!text-[#8b949e] [&>button:hover]:!bg-gray-50 dark:[&>button:hover]:!bg-[#18181b]" />
+        <Background color={isDark ? '#18181b' : '#e5e7eb'} variant={BackgroundVariant.Dots} gap={20} size={1} />
         <MiniMap
           nodeColor={n => (n.data as any)?.color || (isDark ? '#8b949e' : '#9ca3af')}
           maskColor={isDark ? 'rgba(13, 17, 23, 0.8)' : 'rgba(249, 250, 251, 0.8)'}
-          className="!bg-white dark:!bg-[#161b22] !border-gray-200 dark:!border-[#30363d]"
+          className="!bg-white dark:!bg-[#111111] !border-gray-200 dark:!border-[#27272a]"
         />
       </ReactFlow>
 
       {/* Node Detail Panel */}
       {(selectedNode || loadingDetail) && (
-        <div className="absolute top-0 right-0 h-full w-80 bg-white dark:bg-[#161b22] border-l border-gray-200 dark:border-[#30363d] overflow-y-auto z-20 shadow-xl">
+        <div className="absolute top-0 right-0 h-full w-80 bg-white dark:bg-[#111111] border-l border-gray-200 dark:border-[#27272a] overflow-y-auto z-20 shadow-xl">
           <div className="p-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-medium text-gray-900 dark:text-[#e6edf3]">Node Detail</h3>
@@ -236,7 +236,7 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ repoId }) => {
                 {selectedNode.language && (
                   <div>
                     <p className="text-xs text-gray-500 dark:text-[#8b949e] mb-1">Language</p>
-                    <span className="text-xs px-2 py-0.5 bg-gray-100 dark:bg-[#21262d] border border-gray-200 dark:border-[#30363d] rounded text-gray-900 dark:text-[#e6edf3]">
+                    <span className="text-xs px-2 py-0.5 bg-gray-100 dark:bg-[#18181b] border border-gray-200 dark:border-[#27272a] rounded text-gray-900 dark:text-[#e6edf3]">
                       {selectedNode.language}
                     </span>
                   </div>

@@ -58,7 +58,7 @@ const ZipUpload: React.FC<ZipUploadProps> = ({ onSubmit, isLoading, maxSizeMB = 
             ? 'border-[#58a6ff] bg-[#58a6ff]/10'
             : error
             ? 'border-[#f85149] bg-transparent'
-            : 'border-gray-300 dark:border-[#30363d] hover:border-gray-400 dark:hover:border-[#8b949e]'
+            : 'border-gray-300 dark:border-[#27272a] hover:border-gray-400 dark:hover:border-[#8b949e]'
         }`}
         onDragOver={(e) => {
           e.preventDefault()
@@ -98,7 +98,7 @@ const ZipUpload: React.FC<ZipUploadProps> = ({ onSubmit, isLoading, maxSizeMB = 
         <button
           type="submit"
           disabled={isLoading || !file}
-          className="px-6 py-2 rounded-md bg-[#238636] hover:bg-[#2ea043] text-white font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[120px] transition-colors"
+          className="px-6 py-2 rounded-md bg-gray-900 hover:bg-gray-800 dark:bg-[#e6edf3] dark:hover:bg-white text-white dark:text-black font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[120px] transition-colors"
         >
           {isLoading ? <Loader2 size={20} className="animate-spin" /> : 'Analyze ZIP'}
         </button>

@@ -138,12 +138,13 @@ export interface ChatResponse {
 
 export interface ChatMessage {
   id: string
-  role: 'user' | 'assistant'
+  role: 'user' | 'assistant' | 'system'
   content: string
   sources: SourceReference[] | null
   query_category: string | null
   model_used: string | null
   created_at: string
+  thought_time?: number
 }
 
 export interface ChatHistoryResponse {

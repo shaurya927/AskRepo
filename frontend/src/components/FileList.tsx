@@ -11,9 +11,9 @@ interface FileListProps {
 
 const FileList: React.FC<FileListProps> = ({ files }) => {
   return (
-    <div className="w-full overflow-x-auto border border-gray-200 dark:border-[#30363d] rounded-lg">
+    <div className="w-full overflow-x-auto border border-gray-200 dark:border-[#27272a] rounded-lg">
       <table className="w-full text-left text-sm whitespace-nowrap">
-        <thead className="bg-gray-50 dark:bg-[#161b22] text-gray-500 dark:text-[#8b949e]">
+        <thead className="bg-gray-50 dark:bg-[#111111] text-gray-500 dark:text-[#8b949e]">
           <tr>
             <th className="px-4 py-3 font-medium">Path</th>
             <th className="px-4 py-3 font-medium">Language</th>
@@ -21,9 +21,9 @@ const FileList: React.FC<FileListProps> = ({ files }) => {
             <th className="px-4 py-3 font-medium text-right">Size</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200 dark:divide-[#30363d]">
+        <tbody className="divide-y divide-gray-200 dark:divide-[#27272a]">
           {files.map((file) => (
-            <tr key={file.id} className="hover:bg-gray-50 dark:hover:bg-[#21262d] transition-colors">
+            <tr key={file.id} className="hover:bg-gray-50 dark:hover:bg-[#18181b] transition-colors">
               <td className="px-4 py-3">
                 <div className="flex items-center gap-2 text-gray-900 dark:text-[#e6edf3]">
                   {file.language ? (

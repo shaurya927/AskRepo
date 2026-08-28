@@ -37,7 +37,7 @@ const ProgressSteps: React.FC<ProgressStepsProps> = ({ currentStatus, progressDe
               ) : isCurrent ? (
                 <Loader2 size={20} className="text-[#58a6ff] animate-spin" />
               ) : (
-                <Circle size={20} className="text-gray-300 dark:text-[#30363d]" />
+                <Circle size={20} className="text-gray-300 dark:text-[#27272a]" />
               )}
             </div>
             <div className="flex-1">

@@ -1,6 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
 import { ThemeProvider } from './hooks/useTheme'
-import Header from './components/Header'
 import ErrorBoundary from './components/ErrorBoundary'
 import LandingPage from './pages/LandingPage'
 import AnalysisProgressPage from './pages/AnalysisProgressPage'
@@ -10,7 +9,7 @@ function App() {
   return (
     <ThemeProvider>
       <ErrorBoundary>
-        <div className="h-screen bg-white dark:bg-[#0d1117] text-gray-900 dark:text-[#e6edf3] flex flex-col font-sans transition-colors duration-150 overflow-hidden">
+        <div className="h-screen bg-white dark:bg-[#000000] text-gray-900 dark:text-[#e6edf3] flex flex-col font-sans transition-colors duration-150 overflow-hidden">
           <main className="flex-1 flex flex-col relative overflow-y-auto">
             <Routes>
               <Route path="/" element={<LandingPage />} />

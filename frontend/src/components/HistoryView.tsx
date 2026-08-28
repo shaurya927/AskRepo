@@ -89,7 +89,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ repoId }) => {
   return (
     <div className="space-y-4">
       {/* Sub-tabs */}
-      <div className="flex gap-1 bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg p-1 w-fit">
+      <div className="flex gap-1 bg-white dark:bg-[#111111] border border-gray-200 dark:border-[#27272a] rounded-lg p-1 w-fit">
         {([
           { key: 'commits', label: 'Commits', icon: GitCommit },
           { key: 'hotspots', label: 'Hotspots', icon: Flame },
@@ -100,7 +100,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ repoId }) => {
             onClick={() => setSubTab(key)}
             className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded transition-colors ${
               subTab === key
-                ? 'bg-gray-100 dark:bg-[#21262d] text-gray-900 dark:text-[#e6edf3]'
+                ? 'bg-gray-100 dark:bg-[#18181b] text-gray-900 dark:text-[#e6edf3]'
                 : 'text-gray-500 dark:text-[#8b949e] hover:text-gray-900 dark:hover:text-[#e6edf3]'
             }`}
           >
@@ -114,7 +114,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ repoId }) => {
         <div className="space-y-4">
           {/* Timeline Bar */}
           {timeline.length > 0 && (
-            <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg p-4">
+            <div className="bg-white dark:bg-[#111111] border border-gray-200 dark:border-[#27272a] rounded-lg p-4">
               <h3 className="text-xs font-medium text-gray-500 dark:text-[#8b949e] mb-3">Commit Activity</h3>
               <div className="flex items-end gap-[2px] h-16">
                 {timeline.map((t, i) => (
@@ -135,15 +135,15 @@ const HistoryView: React.FC<HistoryViewProps> = ({ repoId }) => {
 
           {/* Commit List */}
           {commits.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 bg-gray-50 dark:bg-[#0d1117] border border-dashed border-gray-200 dark:border-[#30363d] rounded-lg">
-              <GitCommit size={48} className="text-gray-300 dark:text-[#30363d] mb-4" />
+            <div className="flex flex-col items-center justify-center py-20 bg-gray-50 dark:bg-[#000000] border border-dashed border-gray-200 dark:border-[#27272a] rounded-lg">
+              <GitCommit size={48} className="text-gray-300 dark:text-[#27272a] mb-4" />
               <p className="text-gray-500 dark:text-[#8b949e]">No commit history available.</p>
               <p className="text-xs text-gray-400 dark:text-[#6e7681] mt-1">Git history is only available for GitHub-cloned repositories.</p>
             </div>
           ) : (
             <div className="space-y-1">
               {commits.map(c => (
-                <div key={c.sha} className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg overflow-hidden">
+                <div key={c.sha} className="bg-white dark:bg-[#111111] border border-gray-200 dark:border-[#27272a] rounded-lg overflow-hidden">
                   <button
                     onClick={() => handleExpandCommit(c.sha)}
                     className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-[#1c2128] transition-colors"
@@ -169,7 +169,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ repoId }) => {
                   </button>
 
                   {expandedSha === c.sha && (
-                    <div className="border-t border-gray-200 dark:border-[#30363d] px-4 py-3 bg-gray-50 dark:bg-[#0d1117]">
+                    <div className="border-t border-gray-200 dark:border-[#27272a] px-4 py-3 bg-gray-50 dark:bg-[#000000]">
                       {loadingDetail ? (
                         <Loader2 className="animate-spin text-gray-500 dark:text-[#8b949e]" size={16} />
                       ) : commitDetail ? (
@@ -217,14 +217,14 @@ const HistoryView: React.FC<HistoryViewProps> = ({ repoId }) => {
                     <button
                       onClick={() => setPage(p => Math.max(1, p - 1))}
                       disabled={page === 1}
-                      className="px-3 py-1 text-xs bg-gray-100 dark:bg-[#21262d] border border-gray-200 dark:border-[#30363d] rounded text-gray-900 dark:text-[#e6edf3] disabled:opacity-50"
+                      className="px-3 py-1 text-xs bg-gray-100 dark:bg-[#18181b] border border-gray-200 dark:border-[#27272a] rounded text-gray-900 dark:text-[#e6edf3] disabled:opacity-50"
                     >
                       Previous
                     </button>
                     <button
                       onClick={() => setPage(p => p + 1)}
                       disabled={page * 50 >= totalCommits}
-                      className="px-3 py-1 text-xs bg-gray-100 dark:bg-[#21262d] border border-gray-200 dark:border-[#30363d] rounded text-gray-900 dark:text-[#e6edf3] disabled:opacity-50"
+                      className="px-3 py-1 text-xs bg-gray-100 dark:bg-[#18181b] border border-gray-200 dark:border-[#27272a] rounded text-gray-900 dark:text-[#e6edf3] disabled:opacity-50"
                     >
                       Next
                     </button>
@@ -238,15 +238,15 @@ const HistoryView: React.FC<HistoryViewProps> = ({ repoId }) => {
 
       {/* Hotspots Tab */}
       {subTab === 'hotspots' && (
-        <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-200 dark:border-[#30363d]">
+        <div className="bg-white dark:bg-[#111111] border border-gray-200 dark:border-[#27272a] rounded-lg overflow-hidden">
+          <div className="px-4 py-3 border-b border-gray-200 dark:border-[#27272a]">
             <h3 className="text-sm font-medium text-gray-900 dark:text-[#e6edf3]">Most Frequently Changed Files</h3>
             <p className="text-xs text-gray-500 dark:text-[#8b949e] mt-1">Files ranked by number of commits that modified them</p>
           </div>
           {hotspots.length === 0 ? (
             <div className="p-8 text-center text-gray-500 dark:text-[#8b949e] text-sm">No hotspot data available.</div>
           ) : (
-            <div className="divide-y divide-gray-100 dark:divide-[#21262d]">
+            <div className="divide-y divide-gray-100 dark:divide-[#18181b]">
               {hotspots.slice(0, 30).map((h, i) => {
                 const maxCount = hotspots[0]?.change_count || 1
                 return (
@@ -254,7 +254,7 @@ const HistoryView: React.FC<HistoryViewProps> = ({ repoId }) => {
                     <span className="text-xs text-gray-400 dark:text-[#6e7681] w-6 text-right">{i + 1}</span>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-mono text-gray-900 dark:text-[#e6edf3] truncate">{h.file_path}</p>
-                      <div className="mt-1 h-1.5 bg-gray-100 dark:bg-[#21262d] rounded-full overflow-hidden">
+                      <div className="mt-1 h-1.5 bg-gray-100 dark:bg-[#18181b] rounded-full overflow-hidden">
                         <div
                           className="h-full bg-red-500 dark:bg-[#f85149] rounded-full"
                           style={{ width: `${(h.change_count / maxCount) * 100}%` }}
@@ -276,8 +276,8 @@ const HistoryView: React.FC<HistoryViewProps> = ({ repoId }) => {
 
       {/* Co-Changes Tab */}
       {subTab === 'co-changes' && (
-        <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg overflow-hidden">
-          <div className="px-4 py-3 border-b border-gray-200 dark:border-[#30363d]">
+        <div className="bg-white dark:bg-[#111111] border border-gray-200 dark:border-[#27272a] rounded-lg overflow-hidden">
+          <div className="px-4 py-3 border-b border-gray-200 dark:border-[#27272a]">
             <h3 className="text-sm font-medium text-gray-900 dark:text-[#e6edf3]">Files That Change Together</h3>
             <p className="text-xs text-gray-500 dark:text-[#8b949e] mt-1">File pairs frequently modified in the same commit</p>
           </div>
@@ -286,13 +286,13 @@ const HistoryView: React.FC<HistoryViewProps> = ({ repoId }) => {
           ) : (
             <table className="w-full">
               <thead>
-                <tr className="border-b border-gray-100 dark:border-[#21262d]">
+                <tr className="border-b border-gray-100 dark:border-[#18181b]">
                   <th className="text-left text-xs text-gray-500 dark:text-[#8b949e] font-medium px-4 py-2">File A</th>
                   <th className="text-left text-xs text-gray-500 dark:text-[#8b949e] font-medium px-4 py-2">File B</th>
                   <th className="text-right text-xs text-gray-500 dark:text-[#8b949e] font-medium px-4 py-2">Co-Changes</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-[#21262d]">
+              <tbody className="divide-y divide-gray-100 dark:divide-[#18181b]">
                 {coChanges.slice(0, 30).map((cc, i) => (
                   <tr key={i} className="hover:bg-gray-50 dark:hover:bg-[#1c2128]">
                     <td className="px-4 py-2 text-xs font-mono text-gray-900 dark:text-[#e6edf3] truncate max-w-[200px]">{cc.file_a}</td>

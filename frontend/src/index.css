@@ -3,9 +3,9 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-bg-dark: #0d1117;
-  --color-surface-dark: #161b22;
-  --color-border-dark: #30363d;
+  --color-bg-dark: #000000;
+  --color-surface-dark: #111111;
+  --color-border-dark: #27272a;
   --color-text-primary-dark: #e6edf3;
   --color-text-secondary-dark: #8b949e;
   

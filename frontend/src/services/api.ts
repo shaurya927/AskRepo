@@ -118,12 +118,13 @@ export const getRepositoryMetrics = async (
 export const sendChatMessage = async (
   repoId: string,
   message: string,
-  apiKey?: string
+  apiKey?: string,
+  signal?: AbortSignal
 ): Promise<ChatResponse> => {
   const response = await api.post(`/repositories/${repoId}/chat`, {
     message,
     api_key: apiKey || undefined,
-  })
+  }, { signal })
   return response.data
 }
 

@@ -80,9 +80,9 @@ const SymbolList: React.FC<SymbolListProps> = ({ repoId }) => {
   }
 
   return (
-    <div className="bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg overflow-hidden flex flex-col h-full">
+    <div className="bg-white dark:bg-[#111111] border border-gray-200 dark:border-[#27272a] rounded-lg overflow-hidden flex flex-col h-full">
       {/* Filter Bar */}
-      <div className="p-4 border-b border-gray-200 dark:border-[#30363d] flex flex-wrap gap-4 bg-gray-50 dark:bg-[#0d1117]">
+      <div className="p-4 border-b border-gray-200 dark:border-[#27272a] flex flex-wrap gap-4 bg-gray-50 dark:bg-[#000000]">
         <div className="flex-1 min-w-[200px] relative">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
           <input
@@ -90,7 +90,7 @@ const SymbolList: React.FC<SymbolListProps> = ({ repoId }) => {
             placeholder="Search symbols..."
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="w-full pl-9 pr-4 py-2 bg-white dark:bg-[#161b22] border border-gray-300 dark:border-[#30363d] rounded-md text-sm text-gray-900 dark:text-[#e6edf3] focus:border-[#58a6ff] focus:ring-1 focus:ring-[#58a6ff] outline-none"
+            className="w-full pl-9 pr-4 py-2 bg-white dark:bg-[#111111] border border-gray-300 dark:border-[#27272a] rounded-md text-sm text-gray-900 dark:text-[#e6edf3] focus:border-[#58a6ff] focus:ring-1 focus:ring-[#58a6ff] outline-none"
           />
         </div>
         <div className="flex gap-4">
@@ -98,7 +98,7 @@ const SymbolList: React.FC<SymbolListProps> = ({ repoId }) => {
             <select
               value={symbolType}
               onChange={(e) => { setSymbolType(e.target.value); setPage(1); }}
-              className="appearance-none pl-3 pr-8 py-2 bg-white dark:bg-[#161b22] border border-gray-300 dark:border-[#30363d] rounded-md text-sm text-gray-900 dark:text-[#e6edf3] focus:border-[#58a6ff] focus:ring-1 outline-none"
+              className="appearance-none pl-3 pr-8 py-2 bg-white dark:bg-[#111111] border border-gray-300 dark:border-[#27272a] rounded-md text-sm text-gray-900 dark:text-[#e6edf3] focus:border-[#58a6ff] focus:ring-1 outline-none"
             >
               <option value="">All Types</option>
               <option value="function">Functions</option>
@@ -112,7 +112,7 @@ const SymbolList: React.FC<SymbolListProps> = ({ repoId }) => {
             <select
               value={language}
               onChange={(e) => { setLanguage(e.target.value); setPage(1); }}
-              className="appearance-none pl-3 pr-8 py-2 bg-white dark:bg-[#161b22] border border-gray-300 dark:border-[#30363d] rounded-md text-sm text-gray-900 dark:text-[#e6edf3] focus:border-[#58a6ff] focus:ring-1 outline-none"
+              className="appearance-none pl-3 pr-8 py-2 bg-white dark:bg-[#111111] border border-gray-300 dark:border-[#27272a] rounded-md text-sm text-gray-900 dark:text-[#e6edf3] focus:border-[#58a6ff] focus:ring-1 outline-none"
             >
               <option value="">All Languages</option>
               {/* Could populate from available languages in stats */}
@@ -133,7 +133,7 @@ const SymbolList: React.FC<SymbolListProps> = ({ repoId }) => {
       <div className="overflow-x-auto flex-1">
         <table className="w-full text-left border-collapse">
           <thead>
-            <tr className="border-b border-gray-200 dark:border-[#30363d] bg-gray-50 dark:bg-[#161b22]">
+            <tr className="border-b border-gray-200 dark:border-[#27272a] bg-gray-50 dark:bg-[#111111]">
               <th className="py-3 px-4 text-xs font-semibold text-gray-500 dark:text-[#8b949e] uppercase tracking-wider w-8"></th>
               <th className="py-3 px-4 text-xs font-semibold text-gray-500 dark:text-[#8b949e] uppercase tracking-wider">Name</th>
               <th className="py-3 px-4 text-xs font-semibold text-gray-500 dark:text-[#8b949e] uppercase tracking-wider">Type</th>
@@ -142,7 +142,7 @@ const SymbolList: React.FC<SymbolListProps> = ({ repoId }) => {
               <th className="py-3 px-4 text-xs font-semibold text-gray-500 dark:text-[#8b949e] uppercase tracking-wider">Complexity</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200 dark:divide-[#30363d]">
+          <tbody className="divide-y divide-gray-200 dark:divide-[#27272a]">
             {isLoading && symbols.length === 0 ? (
               <tr>
                 <td colSpan={6} className="py-8 text-center text-sm text-gray-500">Loading symbols...</td>
@@ -198,13 +198,13 @@ const SymbolList: React.FC<SymbolListProps> = ({ repoId }) => {
                     </td>
                   </tr>
                   {expandedIds.has(symbol.id) && (
-                    <tr className="bg-gray-50 dark:bg-[#0d1117] border-b border-gray-200 dark:border-[#30363d]">
+                    <tr className="bg-gray-50 dark:bg-[#000000] border-b border-gray-200 dark:border-[#27272a]">
                       <td colSpan={6} className="py-4 px-8">
                         <div className="space-y-4">
                           {symbol.class_name && (
                             <div className="flex gap-2 items-center text-sm">
                               <span className="text-gray-500 dark:text-[#8b949e]">Class:</span>
-                              <span className="font-mono bg-gray-200 dark:bg-[#21262d] px-2 py-0.5 rounded text-gray-800 dark:text-[#c9d1d9]">
+                              <span className="font-mono bg-gray-200 dark:bg-[#18181b] px-2 py-0.5 rounded text-gray-800 dark:text-[#c9d1d9]">
                                 {symbol.class_name}
                               </span>
                             </div>
@@ -224,7 +224,7 @@ const SymbolList: React.FC<SymbolListProps> = ({ repoId }) => {
                           {symbol.signature && (
                             <div>
                               <div className="text-sm text-gray-500 dark:text-[#8b949e] mb-1">Signature</div>
-                              <pre className="p-3 bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-md overflow-x-auto font-mono text-sm text-gray-800 dark:text-[#e6edf3]">
+                              <pre className="p-3 bg-white dark:bg-[#111111] border border-gray-200 dark:border-[#27272a] rounded-md overflow-x-auto font-mono text-sm text-gray-800 dark:text-[#e6edf3]">
                                 {symbol.signature}
                               </pre>
                             </div>
@@ -233,7 +233,7 @@ const SymbolList: React.FC<SymbolListProps> = ({ repoId }) => {
                           {symbol.docstring && (
                             <div>
                               <div className="text-sm text-gray-500 dark:text-[#8b949e] mb-1">Docstring</div>
-                              <pre className="p-3 bg-gray-100 dark:bg-[#21262d] border border-gray-200 dark:border-[#30363d] rounded-md overflow-x-auto font-mono text-sm text-green-700 dark:text-[#7ee787] whitespace-pre-wrap">
+                              <pre className="p-3 bg-gray-100 dark:bg-[#18181b] border border-gray-200 dark:border-[#27272a] rounded-md overflow-x-auto font-mono text-sm text-green-700 dark:text-[#7ee787] whitespace-pre-wrap">
                                 {symbol.docstring}
                               </pre>
                             </div>
@@ -251,7 +251,7 @@ const SymbolList: React.FC<SymbolListProps> = ({ repoId }) => {
 
       {/* Pagination */}
       {total > 0 && (
-        <div className="p-4 border-t border-gray-200 dark:border-[#30363d] flex items-center justify-between bg-white dark:bg-[#161b22]">
+        <div className="p-4 border-t border-gray-200 dark:border-[#27272a] flex items-center justify-between bg-white dark:bg-[#111111]">
           <div className="text-sm text-gray-500 dark:text-[#8b949e]">
             Showing {(page - 1) * 50 + 1} to {Math.min(page * 50, total)} of {total} symbols
           </div>
@@ -259,14 +259,14 @@ const SymbolList: React.FC<SymbolListProps> = ({ repoId }) => {
             <button
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="px-3 py-1 border border-gray-300 dark:border-[#30363d] rounded-md text-sm text-gray-700 dark:text-[#c9d1d9] hover:bg-gray-50 dark:hover:bg-[#21262d] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-1 border border-gray-300 dark:border-[#27272a] rounded-md text-sm text-gray-700 dark:text-[#c9d1d9] hover:bg-gray-50 dark:hover:bg-[#18181b] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Previous
             </button>
             <button
               onClick={() => setPage(p => p + 1)}
               disabled={page * 50 >= total}
-              className="px-3 py-1 border border-gray-300 dark:border-[#30363d] rounded-md text-sm text-gray-700 dark:text-[#c9d1d9] hover:bg-gray-50 dark:hover:bg-[#21262d] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-3 py-1 border border-gray-300 dark:border-[#27272a] rounded-md text-sm text-gray-700 dark:text-[#c9d1d9] hover:bg-gray-50 dark:hover:bg-[#18181b] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Next
             </button>
