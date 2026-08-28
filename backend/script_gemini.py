@@ -11,4 +11,5 @@ async def test():
     except Exception as e:
         print("Exception:", type(e).__name__, str(e))
 
-asyncio.run(test())
+if __name__ == "__main__":
+    asyncio.run(test())

@@ -37,7 +37,7 @@ class GeminiProvider(AIProvider):
             max_output_tokens=max_tokens,
             temperature=0.3,
         )
-        response = self._client.models.generate_content(
+        response = await self._client.aio.models.generate_content(
             model=self._model,
             contents=prompt,
             config=config,
@@ -51,12 +51,12 @@ class GeminiProvider(AIProvider):
             max_output_tokens=max_tokens,
             temperature=0.3,
         )
-        response = self._client.models.generate_content_stream(
+        response = await self._client.aio.models.generate_content_stream(
             model=self._model,
             contents=prompt,
             config=config,
         )
-        for chunk in response:
+        async for chunk in response:
             if chunk.text:
                 yield chunk.text
 
