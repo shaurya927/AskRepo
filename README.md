@@ -4,22 +4,22 @@ AskRepo is an AI-powered codebase intelligence tool that allows developers to un
 
 ## Core Features
 
-### 🤖 Multi-Agent AI System
+###  Multi-Agent AI System
 AskRepo features a sophisticated autonomous routing system that classifies your query and delegates it to specialized AI agents:
 * **Router Agent:** Analyzes the user's prompt to determine intent and dispatches the request to the most qualified sub-agent.
 * **Code Agent:** Expert at explaining syntax, debugging logic, and retrieving highly specific function-level context using vector search.
 * **Architecture Agent:** Understands the broader system design, analyzing the dependency graph to explain how different modules and files interact.
 * **Repository Agent:** Answers high-level questions about the repository's purpose, tech stack, and overall statistics without needing to search the code.
 
-### 🧠 Retrieval-Augmented Generation (RAG)
+###  Retrieval-Augmented Generation (RAG)
 When you ask a question, AskRepo doesn't guess. It uses an advanced RAG pipeline to ground the AI in reality:
 * **Semantic Search:** Uses Google Gemini Embeddings and a FAISS vector database to instantly retrieve the exact files and functions relevant to your question.
 * **Tree-Sitter Parsing:** Extracts Abstract Syntax Trees (ASTs) from the raw code, allowing the AI to understand the structural boundaries of classes, methods, and variables rather than just reading raw text.
 
-### 🕸️ Interactive Architecture Graph
+###  Interactive Architecture Graph
 AskRepo automatically analyzes import statements and file dependencies across the codebase to generate a full, interactive 2D network graph of the repository's architecture. 
 
-### ⏳ Git History & Hotspot Analysis
+###  Git History & Hotspot Analysis
 The platform acts as a Git Archaeologist, analyzing the repository's commit history to identify "hotspots" (files that are modified most frequently) and co-changing files. This helps new developers instantly understand where the core active logic of the application resides.
 
 ## Tech Stack
