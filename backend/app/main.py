@@ -39,6 +39,29 @@ async def lifespan(app: FastAPI):
             logger.error("Failed to preload embedding model: %s", e)
             
     asyncio.create_task(_preload())
+    
+    # Auto-ping mechanism to keep Render Free Tier awake
+    import os
+    async def _keep_alive():
+        url = os.environ.get("RENDER_EXTERNAL_URL")
+        if not url:
+            return
+            
+        logger.info("Keep-alive task started for %s", url)
+        # Avoid circular imports or blocking the loop; use httpx asynchronously
+        import httpx
+        async with httpx.AsyncClient() as client:
+            while True:
+                await asyncio.sleep(600)  # Ping every 10 minutes
+                try:
+                    # Hit our own static root or API so Render sees inbound internet traffic
+                    await client.get(f"{url.rstrip('/')}/", timeout=10.0)
+                    logger.debug("Keep-alive ping sent successfully")
+                except Exception as e:
+                    logger.warning("Keep-alive ping failed: %s", e)
+
+    if os.environ.get("RENDER_EXTERNAL_URL"):
+        asyncio.create_task(_keep_alive())
 
     # Clean up any orphaned temp directories from previous runs
     cleaned = cleanup_stale_workspaces(settings.TEMP_REPOSITORY_PATH, settings.CLEANUP_MAX_AGE_HOURS)
