@@ -1,61 +1,63 @@
 # AskRepo
 
-AskRepo is an AI-powered codebase intelligence tool that allows developers to understand, navigate, and analyze any GitHub repository in minutes. By providing a GitHub URL or uploading a ZIP file, AskRepo autonomously parses the codebase, maps its dependencies, and allows you to chat with a sophisticated Multi-Agent AI system that has deep, contextual knowledge of the code.
+**Live Demo:** [https://askrepo.onrender.com/](https://askrepo.onrender.com/)
+
+AskRepo is an AI-powered codebase intelligence platform designed to help developers seamlessly understand, navigate, and analyze complex GitHub repositories. By processing a GitHub URL or a ZIP archive, AskRepo autonomously parses the source code, maps its dependencies, and provides an interactive interface to query the repository using a sophisticated Multi-Agent AI system.
 
 ## Core Features
 
-###  Multi-Agent AI System
-AskRepo features a sophisticated autonomous routing system that classifies your query and delegates it to specialized AI agents:
+### Multi-Agent Autonomous System
+AskRepo goes beyond standard prompt engineering by utilizing a multi-agent orchestration architecture. User queries are classified and routed to specialized agents, ensuring high accuracy and contextual relevance:
 * **Router Agent:** Analyzes the user's prompt to determine intent and dispatches the request to the most qualified sub-agent.
-* **Code Agent:** Expert at explaining syntax, debugging logic, and retrieving highly specific function-level context using vector search.
+* **Code Agent:** Specializes in explaining syntax, debugging logic, and retrieving highly specific function-level context using vector search.
 * **Architecture Agent:** Understands the broader system design, analyzing the dependency graph to explain how different modules and files interact.
-* **Repository Agent:** Answers high-level questions about the repository's purpose, tech stack, and overall statistics without needing to search the code.
+* **Repository Agent:** Answers high-level questions regarding the repository's purpose, technology stack, and statistical metadata without invoking unnecessary vector searches.
 
-###  Retrieval-Augmented Generation (RAG)
-When you ask a question, AskRepo doesn't guess. It uses an advanced RAG pipeline to ground the AI in reality:
-* **Semantic Search:** Uses Google Gemini Embeddings and a FAISS vector database to instantly retrieve the exact files and functions relevant to your question.
-* **Tree-Sitter Parsing:** Extracts Abstract Syntax Trees (ASTs) from the raw code, allowing the AI to understand the structural boundaries of classes, methods, and variables rather than just reading raw text.
+### Advanced Retrieval-Augmented Generation (RAG)
+To ground the AI's responses in factual, repository-specific data, AskRepo implements an advanced RAG pipeline:
+* **Structural Chunking via ASTs:** Instead of arbitrary text splitting, the platform uses Tree-sitter to parse Abstract Syntax Trees (ASTs). This ensures the AI understands the structural boundaries of classes, methods, and functions.
+* **Dense Vector Semantic Search:** Code chunks are converted into 3072-dimensional vectors using Google Gemini Embeddings and stored in a FAISS vector database, enabling blazing-fast nearest-neighbor semantic retrieval.
 
-###  Interactive Architecture Graph
-AskRepo automatically analyzes import statements and file dependencies across the codebase to generate a full, interactive 2D network graph of the repository's architecture. 
+### Interactive Architecture Graph
+AskRepo statically analyzes import statements and file dependencies across the codebase to automatically generate a full, interactive 2D network graph. This provides developers with an immediate visual understanding of the repository's architecture and module coupling.
 
-###  Git History & Hotspot Analysis
-The platform acts as a Git Archaeologist, analyzing the repository's commit history to identify "hotspots" (files that are modified most frequently) and co-changing files. This helps new developers instantly understand where the core active logic of the application resides.
+### Git History and Hotspot Analysis
+The platform analyzes the repository's commit history to identify development "hotspots" (files that are modified most frequently) and co-changing files. This analytical layer helps onboarding developers quickly identify where the core active logic of the application resides.
 
-## Tech Stack
+## Technology Stack
 
 ### Backend
-* **Python & FastAPI:** High-performance async API server.
-* **PostgreSQL & SQLAlchemy:** Relational database for storing repository metadata and analysis results.
-* **FAISS:** Vector database for semantic search and RAG capabilities.
-* **Google Gemini AI:** Powers the multi-agent system and text embeddings.
-* **Tree-sitter:** Used for syntax-aware code parsing across multiple languages.
+* **Python & FastAPI:** High-performance asynchronous API server.
+* **PostgreSQL & SQLAlchemy:** Relational database for storing repository metadata and asynchronous analysis jobs.
+* **FAISS:** In-memory vector database for semantic search and RAG capabilities.
+* **Google Gemini API:** Powers the multi-agent system and text embedding generation.
+* **Tree-sitter:** Syntax-aware code parsing engine supporting multiple languages.
 
 ### Frontend
-* **React & TypeScript:** Strongly typed modern UI framework.
-* **Tailwind CSS:** Utility-first styling for a clean and responsive design.
-* **Framer Motion:** Smooth animations and transitions.
-* **Cytoscape.js:** Renders the interactive 2D dependency graph.
+* **React & TypeScript:** Strongly typed, component-driven user interface.
+* **Tailwind CSS:** Utility-first styling for a clean, responsive design.
+* **Framer Motion:** High-performance animations and transitions.
+* **Cytoscape.js:** Renders the interactive, physics-based 2D dependency graph.
 
 ## Deployment
 
-AskRepo is designed to be deployed as a unified Docker container, making it easy to host the entire application on platforms like Render.
+AskRepo is containerized using Docker, allowing for seamless deployment across cloud platforms.
 
-### Prerequisites for Deployment
-1. A free PostgreSQL database (e.g., Neon.tech).
+### Prerequisites
+1. A managed PostgreSQL database (e.g., Neon.tech).
 2. A Google Gemini API Key.
-3. A GitHub Personal Access Token (for bypassing unauthenticated rate limits).
+3. A GitHub Personal Access Token (to bypass unauthenticated rate limits during repository cloning).
 
 ### Deploying to Render
 1. Create a new **Web Service** on [Render](https://render.com).
-2. Connect your GitHub repository.
+2. Connect the target GitHub repository.
 3. Set the Environment to **Docker**.
-4. Add the following Environment Variables:
-   - `DATABASE_URL`: Your PostgreSQL connection string (must use `postgresql+asyncpg://`).
+4. Configure the following Environment Variables:
+   - `DATABASE_URL`: Your PostgreSQL connection string (must use the `postgresql+asyncpg://` dialect).
    - `GOOGLE_API_KEY`: Your Gemini API key.
    - `GITHUB_TOKEN`: Your GitHub token.
-   - `MAX_REPOSITORY_SIZE_MB`: (Optional) Set to `500` to allow larger repositories.
-5. Deploy the service. Render will automatically build the frontend, package it with the FastAPI backend, and serve it on a single URL.
+   - `MAX_REPOSITORY_SIZE_MB`: (Optional) Set to `500` to allow the analysis of larger repositories.
+5. Deploy the service. Render will automatically build the React frontend, package it with the FastAPI backend, and serve the application on a single unified port.
 
 ## Local Development
 
@@ -64,7 +66,7 @@ AskRepo is designed to be deployed as a unified Docker container, making it easy
 2. Create a virtual environment and install dependencies:
    ```bash
    python -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+   source venv/bin/activate  # On Windows use: venv\Scripts\activate
    pip install -r requirements.txt
    ```
 3. Create a `.env` file based on `.env.example`.
