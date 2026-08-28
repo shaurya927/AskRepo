@@ -30,7 +30,7 @@ const RepoInput: React.FC<RepoInputProps> = ({ onSubmit, isLoading }) => {
   return (
     <form onSubmit={handleSubmit} className="w-full max-w-xl mx-auto space-y-4">
       <div>
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-2">
           <input
             type="url"
             value={url}
@@ -39,7 +39,7 @@ const RepoInput: React.FC<RepoInputProps> = ({ onSubmit, isLoading }) => {
               if (error) validateUrl(e.target.value)
             }}
             placeholder="https://github.com/user/repository"
-            className={`flex-1 px-4 py-2 rounded-md border bg-transparent text-gray-900 dark:text-[#e6edf3] focus:outline-none focus:ring-1 focus:border-[#58a6ff] ${
+            className={`flex-1 w-full px-4 py-2.5 sm:py-2 rounded-md border bg-transparent text-gray-900 dark:text-[#e6edf3] focus:outline-none focus:ring-1 focus:border-[#58a6ff] ${
               error ? 'border-[#f85149]' : 'border-gray-300 dark:border-[#27272a]'
             }`}
             disabled={isLoading}
@@ -47,7 +47,7 @@ const RepoInput: React.FC<RepoInputProps> = ({ onSubmit, isLoading }) => {
           <button
             type="submit"
             disabled={isLoading || !url}
-            className="px-6 py-2 rounded-md bg-gray-900 hover:bg-gray-800 dark:bg-[#e6edf3] dark:hover:bg-white text-white dark:text-black font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[100px] transition-colors"
+            className="w-full sm:w-auto px-6 py-2.5 sm:py-2 rounded-md bg-gray-900 hover:bg-gray-800 dark:bg-[#e6edf3] dark:hover:bg-white text-white dark:text-black font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[100px] transition-colors"
           >
             {isLoading ? <Loader2 size={20} className="animate-spin" /> : 'Analyze'}
           </button>

@@ -4,7 +4,7 @@ import {
   FileCode, Folder, Database, Code, ShieldAlert, FileText, Settings, Play,
   FunctionSquare, Box, Braces, Activity, GitFork, Package,
   LayoutDashboard, FolderTree, History, MessageSquare, Layers, Network,
-  Terminal, GitBranch as GithubIcon, ChevronDown, ChevronRight
+  Terminal, GitBranch as GithubIcon, ChevronDown, ChevronRight, Menu
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
@@ -29,6 +29,7 @@ const DashboardPage: React.FC = () => {
   const { repoId } = useParams<{ repoId: string }>()
   const [activeTab, setActiveTab] = useState<TabType>('overview')
   const [isNavExpanded, setIsNavExpanded] = useState(true)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   const [repo, setRepo] = useState<Repository | null>(null)
   const [stats, setStats] = useState<RepositoryStats | null>(null)
@@ -100,8 +101,16 @@ const DashboardPage: React.FC = () => {
 
   return (
     <div className="absolute inset-0 flex overflow-hidden bg-white dark:bg-[#000000]">
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 md:hidden transition-opacity"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <div className="w-64 flex-shrink-0 bg-gray-50/50 dark:bg-[#111111]/50 flex flex-col overflow-hidden">
+      <div className={`fixed inset-y-0 left-0 z-50 transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:relative md:translate-x-0 transition-transform duration-200 ease-in-out w-64 flex-shrink-0 bg-gray-50/95 md:bg-gray-50/50 dark:bg-[#111111]/95 md:dark:bg-[#111111]/50 flex flex-col overflow-hidden shadow-xl md:shadow-none backdrop-blur-sm md:backdrop-blur-none`}>
         
         {/* App Branding */}
         <div className="p-4 flex items-center gap-2 text-gray-900 dark:text-[#e6edf3]">
@@ -143,10 +152,13 @@ const DashboardPage: React.FC = () => {
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                onClick={() => {
+                  setActiveTab(tab.id)
+                  setIsSidebarOpen(false)
+                }}
+                className={`w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                   activeTab === tab.id
-                    ? 'bg-white dark:bg-[#18181b] text-gray-900 dark:text-[#58a6ff] shadow-sm'
+                    ? 'bg-white dark:bg-[#1f1f22] text-gray-900 dark:text-[#e6edf3] shadow-sm ring-1 ring-gray-200/50 dark:ring-white/5'
                     : 'text-gray-600 dark:text-[#8b949e] hover:bg-white/60 dark:hover:bg-[#18181b]/60 hover:text-gray-900 dark:hover:text-[#c9d1d9]'
                 }`}
               >
@@ -184,16 +196,31 @@ const DashboardPage: React.FC = () => {
         </div>
 
         {/* Main Content */}
-        <div className={`flex-1 relative bg-white dark:bg-[#000000] flex flex-col ${(activeTab === 'chat' || activeTab === 'dependencies') ? 'overflow-hidden' : 'p-6 overflow-y-auto'}`}>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeTab}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.15, ease: 'easeOut' }}
-              className={(activeTab === 'chat' || activeTab === 'dependencies') ? 'flex-1 h-full' : 'max-w-7xl mx-auto w-full'}
+        <div className="flex-1 relative bg-white dark:bg-[#000000] flex flex-col w-full min-w-0">
+          {/* Mobile Header */}
+          <div className="md:hidden flex items-center justify-between p-4 border-b border-gray-200 dark:border-[#27272a] bg-gray-50/50 dark:bg-[#111111]/50 backdrop-blur-sm z-10 sticky top-0">
+            <span className="font-semibold text-gray-900 dark:text-[#e6edf3] truncate text-sm">
+              <FileCode className="inline-block mr-2 text-gray-400 dark:text-[#8b949e]" size={16} />
+              {repo?.name || 'Loading...'}
+            </span>
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="p-1.5 -mr-1 rounded-md text-gray-600 dark:text-[#8b949e] hover:bg-gray-200 dark:hover:bg-[#27272a] transition-colors"
             >
+              <Menu size={20} />
+            </button>
+          </div>
+
+          <div className={`flex-1 relative flex flex-col ${(activeTab === 'chat' || activeTab === 'dependencies') ? 'overflow-hidden' : 'p-4 sm:p-6 overflow-y-auto'}`}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
+                className={(activeTab === 'chat' || activeTab === 'dependencies') ? 'flex-1 h-full' : 'max-w-7xl mx-auto w-full'}
+              >
             {activeTab === 'overview' && (
               <div className="space-y-6">
               {/* File stats */}
@@ -371,6 +398,7 @@ const DashboardPage: React.FC = () => {
 
           </motion.div>
         </AnimatePresence>
+        </div>
       </div>
     </div>
   )

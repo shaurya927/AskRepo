@@ -356,18 +356,17 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ repoId }) => {
               )}
             </div>
           </div>
-          <div className="grid grid-cols-3 items-center mt-2 mb-1 px-2 text-[11px] text-gray-500 dark:text-[#6e7681]">
-            <div></div>
-            <p className="text-center whitespace-nowrap">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-1 mt-2 mb-1 px-2 text-[10px] sm:text-[11px] text-gray-500 dark:text-[#6e7681]">
+            <p className="text-center flex-1 w-full max-w-full overflow-hidden text-ellipsis px-1">
               AI can make mistakes. Please verify important information.
             </p>
-            <div className="text-right">
-              {rateLimit && (
-                <span title={`${rateLimit.remaining} / ${rateLimit.limit} requests remaining today`} className={rateLimit.remaining === 0 ? 'text-red-500' : ''}>
+            {rateLimit && (
+              <div className="text-center sm:text-right flex-shrink-0">
+                <span title={`${rateLimit.remaining} / ${rateLimit.limit} requests remaining today`} className={rateLimit.remaining === 0 ? 'text-red-500 font-medium' : ''}>
                   API Limit: {Math.round((rateLimit.remaining / rateLimit.limit) * 100)}%
                 </span>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
