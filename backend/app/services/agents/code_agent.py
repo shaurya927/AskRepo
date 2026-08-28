@@ -90,13 +90,14 @@ class CodeAgent(BaseAgent):
                     confidence=0.9,
                     used_llm=True,
                 )
-            except Exception:
-                pass
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).warning(f"CodeAgent LLM failed (likely rate limit): {e}")
 
         # Fallback: return raw contexts
         return AgentResult(
             agent_name=self.name,
-            answer=f"Found {len(contexts)} relevant code sections:\n\n{context_text[:3000]}",
+            answer=f"⚠️ **AI Generation Failed** (likely due to API rate limits). Here are the raw code sections I found instead:\n\n{context_text[:3000]}",
             sources=sources,
             confidence=0.6,
             used_llm=False,

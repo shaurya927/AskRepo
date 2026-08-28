@@ -94,8 +94,10 @@ class RepositoryAgent(BaseAgent):
             try:
                 answer, model = await ai_gateway.generate(prompt=user_prompt, system=system, byok_key=kwargs.get("byok_key"))
                 return AgentResult(agent_name=self.name, answer=answer, confidence=0.85, used_llm=True)
-            except Exception:
-                pass
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).warning(f"RepositoryAgent LLM failed: {e}")
+                parts.insert(0, "⚠️ **AI Generation Failed** (likely due to API rate limits). Here are the raw repository statistics:\n")
 
         return AgentResult(
             agent_name=self.name,
