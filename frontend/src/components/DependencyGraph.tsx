@@ -132,7 +132,7 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ repoId }) => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-96 bg-gray-50 dark:bg-[#0d1117] border border-gray-200 dark:border-[#30363d] rounded-lg">
+      <div className="flex items-center justify-center h-full">
         <Loader2 className="animate-spin text-gray-500 dark:text-[#8b949e]" size={24} />
         <span className="ml-2 text-gray-500 dark:text-[#8b949e]">Loading dependency graph...</span>
       </div>
@@ -141,7 +141,7 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ repoId }) => {
 
   if (nodes.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-96 bg-gray-50 dark:bg-[#0d1117] border border-gray-200 dark:border-[#30363d] rounded-lg">
+      <div className="flex flex-col items-center justify-center h-full">
         <Layers size={48} className="text-gray-300 dark:text-[#30363d] mb-4" />
         <p className="text-gray-500 dark:text-[#8b949e]">No dependency data available for this repository.</p>
       </div>
@@ -149,7 +149,7 @@ const DependencyGraph: React.FC<DependencyGraphProps> = ({ repoId }) => {
   }
 
   return (
-    <div className="relative h-[calc(100vh-260px)] bg-gray-50 dark:bg-[#0d1117] border border-gray-200 dark:border-[#30363d] rounded-lg overflow-hidden">
+    <div className="relative h-full w-full bg-white dark:bg-[#0d1117] overflow-hidden">
       {/* Toolbar */}
       <div className="absolute top-3 left-3 z-10 flex items-center gap-2">
         <div className="flex bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-lg overflow-hidden shadow-sm">

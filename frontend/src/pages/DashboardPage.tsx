@@ -3,8 +3,11 @@ import { useParams } from 'react-router-dom'
 import {
   FileCode, Folder, Database, Code, ShieldAlert, FileText, Settings, Play,
   FunctionSquare, Box, Braces, Activity, GitFork, Package,
-  LayoutDashboard, FolderTree, History, MessageSquare, Layers, Network
+  LayoutDashboard, FolderTree, History, MessageSquare, Layers, Network,
+  Terminal, GitBranch as GithubIcon, ChevronDown, ChevronRight
 } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import ThemeToggle from '../components/ThemeToggle'
 import { getRepository, getRepositoryStats, getRepositoryFiles } from '../services/api'
 import type { Repository, RepositoryStats, RepositoryFile } from '../types/api'
 import { formatNumber, formatBytes } from '../utils/format'
@@ -24,6 +27,7 @@ type TabType = 'overview' | 'files' | 'symbols' | 'architecture' | 'dependencies
 const DashboardPage: React.FC = () => {
   const { repoId } = useParams<{ repoId: string }>()
   const [activeTab, setActiveTab] = useState<TabType>('overview')
+  const [isNavExpanded, setIsNavExpanded] = useState(true)
 
   const [repo, setRepo] = useState<Repository | null>(null)
   const [stats, setStats] = useState<RepositoryStats | null>(null)
@@ -94,64 +98,93 @@ const DashboardPage: React.FC = () => {
   ]
 
   return (
-    <div className="absolute inset-0 flex flex-col overflow-hidden bg-white dark:bg-[#0d1117]">
-      {/* Repository Header */}
-      <div className="bg-white dark:bg-[#161b22] border-b border-gray-200 dark:border-[#30363d] py-4 px-6 flex-shrink-0 z-10">
-        <div className="flex items-center justify-between w-full">
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-[#e6edf3] flex items-center gap-2">
-              <FileCode className="text-gray-400 dark:text-[#8b949e]" />
-              {repo.name}
-            </h1>
-            <Badge label={repo.source.toUpperCase()} variant="status" />
-            {repo.url && (
-              <a href={repo.url} target="_blank" rel="noopener noreferrer" className="text-sm text-[#58a6ff] hover:underline">
-                View on GitHub
-              </a>
-            )}
-          </div>
+    <div className="absolute inset-0 flex overflow-hidden bg-white dark:bg-[#0d1117]">
+      {/* Sidebar */}
+      <div className="w-64 flex-shrink-0 bg-gray-50/50 dark:bg-[#161b22]/50 flex flex-col overflow-hidden">
+        
+        {/* App Branding */}
+        <div className="p-4 flex items-center gap-2 text-gray-900 dark:text-[#e6edf3]">
+          <Link to="/" className="flex items-center gap-2 hover:text-[#58a6ff] dark:hover:text-[#58a6ff] transition-colors">
+            <Terminal size={24} className="text-[#58a6ff]" />
+            <span className="font-semibold text-lg tracking-tight">AskRepo</span>
+          </Link>
         </div>
-      </div>
 
-      {/* Main Layout (Sidebar + Content) */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar */}
-        <div className="w-64 flex-shrink-0 bg-white dark:bg-[#0d1117] border-r border-gray-200 dark:border-[#30363d] overflow-y-auto">
-          <nav className="p-4 space-y-1">
-            {tabs.map(tab => {
-              const Icon = tab.icon
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+        {/* Repository Header inside Sidebar */}
+        <div className="px-4 pb-4 flex-shrink-0 flex items-center justify-between">
+          <button 
+            onClick={() => {
+              if (repo.source === 'github' && repo.url) {
+                window.open(repo.url, '_blank')
+              } else {
+                alert(`Downloading ${repo.name} source code zip...`)
+              }
+            }}
+            title={repo.source === 'github' ? "View on GitHub" : "Download Repository"}
+            className="flex-1 text-left text-base font-semibold text-gray-900 dark:text-[#e6edf3] flex items-center gap-2 hover:text-[#58a6ff] dark:hover:text-[#58a6ff] transition-colors cursor-pointer group min-w-0"
+          >
+            <FileCode className="text-gray-400 dark:text-[#8b949e] group-hover:text-[#58a6ff] transition-colors flex-shrink-0" size={16} />
+            <span className="truncate">{repo.name}</span>
+          </button>
+          <button
+            onClick={() => setIsNavExpanded(!isNavExpanded)}
+            className="p-1 ml-2 rounded-md text-gray-400 dark:text-[#8b949e] hover:bg-gray-200 dark:hover:bg-[#30363d] hover:text-gray-900 dark:hover:text-[#e6edf3] transition-colors flex-shrink-0"
+            title={isNavExpanded ? "Collapse Navigation" : "Expand Navigation"}
+          >
+            {isNavExpanded ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
+          </button>
+        </div>
+        
+        {/* Navigation */}
+        <nav className="px-3 pb-3 space-y-1 flex-1 overflow-y-auto">
+          {isNavExpanded && tabs.map(tab => {
+            const Icon = tab.icon
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                  activeTab === tab.id
+                    ? 'bg-white dark:bg-[#21262d] text-gray-900 dark:text-[#58a6ff] shadow-sm'
+                    : 'text-gray-600 dark:text-[#8b949e] hover:bg-white/60 dark:hover:bg-[#21262d]/60 hover:text-gray-900 dark:hover:text-[#c9d1d9]'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Icon size={18} className={activeTab === tab.id ? 'text-[#58a6ff]' : 'text-gray-400 dark:text-[#8b949e]'} />
+                  <span>{tab.label}</span>
+                </div>
+                {tab.count !== undefined && (
+                  <span className={`px-2 py-0.5 rounded-full text-[11px] ${
                     activeTab === tab.id
-                      ? 'bg-gray-100 dark:bg-[#1f6feb]/10 text-gray-900 dark:text-[#58a6ff]'
-                      : 'text-gray-600 dark:text-[#8b949e] hover:bg-gray-50 dark:hover:bg-[#161b22] hover:text-gray-900 dark:hover:text-[#c9d1d9]'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <Icon size={18} className={activeTab === tab.id ? 'text-[#58a6ff]' : 'text-gray-400 dark:text-[#8b949e]'} />
-                    <span>{tab.label}</span>
-                  </div>
-                  {tab.count !== undefined && (
-                    <span className={`px-2 py-0.5 rounded-full text-[11px] ${
-                      activeTab === tab.id
-                        ? 'bg-gray-200 dark:bg-[#1f6feb]/20 text-gray-900 dark:text-[#58a6ff]'
-                        : 'bg-gray-100 dark:bg-[#21262d] text-gray-500 dark:text-[#8b949e]'
-                    }`}>
-                      {formatNumber(tab.count)}
-                    </span>
-                  )}
-                </button>
-              )
-            })}
-          </nav>
+                      ? 'bg-gray-100 dark:bg-[#1f6feb]/20 text-gray-900 dark:text-[#58a6ff]'
+                      : 'bg-gray-200/50 dark:bg-[#0d1117] text-gray-500 dark:text-[#8b949e]'
+                  }`}>
+                    {formatNumber(tab.count)}
+                  </span>
+                )}
+              </button>
+            )
+          })}
+        </nav>
+          
+          {/* Sidebar Footer */}
+          <div className="p-3 flex-shrink-0 flex items-center justify-between">
+            <a
+              href="https://github.com/shaurya927/AskRepo"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-1.5 rounded-lg text-gray-500 dark:text-[#8b949e] hover:bg-white/60 dark:hover:bg-[#21262d]/60 hover:text-gray-900 dark:hover:text-[#e6edf3] transition-colors flex items-center gap-2 text-sm font-medium"
+            >
+              <GithubIcon size={18} />
+              <span>GitHub</span>
+            </a>
+            <ThemeToggle />
+          </div>
         </div>
 
         {/* Main Content */}
-        <div className={`flex-1 relative bg-white dark:bg-[#0d1117] flex flex-col ${activeTab === 'chat' ? 'overflow-hidden' : 'p-6 overflow-y-auto'}`}>
-          <div className={activeTab === 'chat' ? 'flex-1 h-full' : 'max-w-7xl mx-auto w-full'}>
+        <div className={`flex-1 relative bg-white dark:bg-[#0d1117] flex flex-col ${(activeTab === 'chat' || activeTab === 'dependencies') ? 'overflow-hidden' : 'p-6 overflow-y-auto'}`}>
+          <div className={(activeTab === 'chat' || activeTab === 'dependencies') ? 'flex-1 h-full' : 'max-w-7xl mx-auto w-full'}>
 
           {activeTab === 'overview' && (
             <div className="space-y-6">
@@ -330,7 +363,6 @@ const DashboardPage: React.FC = () => {
 
         </div>
       </div>
-    </div>
     </div>
   )
 }

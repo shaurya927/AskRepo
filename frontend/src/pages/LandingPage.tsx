@@ -4,6 +4,7 @@ import { GitBranch, Scan, MessageSquare } from 'lucide-react'
 import RepoInput from '../components/RepoInput'
 import ZipUpload from '../components/ZipUpload'
 import { createRepositoryFromURL, createRepositoryFromZip } from '../services/api'
+import Header from '../components/Header'
 
 const LandingPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'github' | 'zip'>('github')
@@ -36,7 +37,9 @@ const LandingPage: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 flex flex-col items-center py-16 px-4 sm:px-6 lg:px-8">
+    <div className="flex-1 flex flex-col h-full overflow-y-auto">
+      <Header />
+      <div className="flex-1 flex flex-col items-center py-16 px-4 sm:px-6 lg:px-8">
       <div className="text-center max-w-3xl mx-auto mb-12">
         <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-gray-900 dark:text-[#e6edf3] mb-4">
           AskRepo
@@ -121,6 +124,7 @@ const LandingPage: React.FC = () => {
       <footer className="mt-auto pt-16 pb-8 text-center text-sm text-gray-400 dark:text-[#6e7681]">
         Built for developers.
       </footer>
+      </div>
     </div>
   )
 }

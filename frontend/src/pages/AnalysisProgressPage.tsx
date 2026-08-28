@@ -4,6 +4,8 @@ import { AlertCircle } from 'lucide-react'
 import { useAnalysisStatus } from '../hooks/useAnalysisStatus'
 import ProgressSteps from '../components/ProgressSteps'
 
+import Header from '../components/Header'
+
 const AnalysisProgressPage: React.FC = () => {
   const { jobId } = useParams<{ jobId: string }>()
   const navigate = useNavigate()
@@ -20,7 +22,9 @@ const AnalysisProgressPage: React.FC = () => {
   }, [isComplete, repositoryId, navigate])
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-6">
+    <div className="flex-1 flex flex-col h-full overflow-y-auto">
+      <Header />
+      <div className="flex-1 flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-2xl bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-xl shadow-sm p-8 text-center">
         <h2 className="text-2xl font-semibold text-gray-900 dark:text-[#e6edf3] mb-8">
           Analyzing Repository
@@ -48,6 +52,7 @@ const AnalysisProgressPage: React.FC = () => {
           </div>
         )}
       </div>
+    </div>
     </div>
   )
 }

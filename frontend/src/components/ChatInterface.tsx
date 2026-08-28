@@ -126,7 +126,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ repoId }) => {
   const renderMessage = (msg: ChatMessageType) => {
     if (msg.role === 'user') {
       return (
-        <div key={msg.id} className="flex justify-end mb-6 w-full max-w-3xl mx-auto px-4">
+        <div key={msg.id} className="flex justify-end mb-6 w-full max-w-5xl mx-auto px-4">
           <div className="max-w-[85%] bg-gray-100 dark:bg-[#21262d] text-gray-900 dark:text-[#e6edf3] rounded-3xl px-5 py-3.5 text-[15px] leading-relaxed shadow-sm">
             {msg.content}
           </div>
@@ -134,7 +134,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ repoId }) => {
       )
     }
     return (
-      <div key={msg.id} className="mb-8 flex gap-4 w-full max-w-3xl mx-auto px-4 group">
+      <div key={msg.id} className="mb-8 flex gap-4 w-full max-w-5xl mx-auto px-4 group">
         <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#ca9dfc] to-[#9254de] flex items-center justify-center flex-shrink-0 mt-1 shadow-sm">
           <Sparkles size={16} className="text-white fill-white" />
         </div>
@@ -198,7 +198,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ repoId }) => {
         {messages.map(renderMessage)}
 
         {isLoading && (
-          <div className="mb-8 flex gap-4 w-full max-w-3xl mx-auto px-4">
+          <div className="mb-8 flex gap-4 w-full max-w-5xl mx-auto px-4">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-[#ca9dfc]/50 to-[#9254de]/50 flex items-center justify-center flex-shrink-0 mt-1">
               <Sparkles size={16} className="text-white/70" />
             </div>
@@ -213,7 +213,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ repoId }) => {
         )}
 
         {error && (
-          <div className="mb-8 flex items-start gap-3 w-full max-w-3xl mx-auto px-4">
+          <div className="mb-8 flex items-start gap-3 w-full max-w-5xl mx-auto px-4">
             <div className="w-8 h-8 rounded-xl bg-red-50 dark:bg-[#f85149]/20 flex items-center justify-center flex-shrink-0 mt-1">
               <AlertCircle size={16} className="text-red-500 dark:text-[#f85149]" />
             </div>
@@ -234,7 +234,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ repoId }) => {
 
       {/* Input Area (Absolute positioned at bottom) */}
       <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white via-white dark:from-[#0d1117] dark:via-[#0d1117] to-transparent pt-10">
-        <div className="max-w-3xl mx-auto relative">
+        <div className="max-w-5xl mx-auto relative">
           <div className="flex items-end gap-2 bg-white dark:bg-[#161b22] border border-gray-200 dark:border-[#30363d] rounded-3xl p-2 shadow-sm dark:shadow-lg focus-within:border-gray-400 dark:focus-within:border-[#8b949e] focus-within:ring-1 focus-within:ring-gray-400 dark:focus-within:ring-[#8b949e] transition-all">
             <textarea
               ref={textareaRef}
