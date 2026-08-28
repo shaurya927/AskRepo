@@ -65,11 +65,18 @@ class SentenceTransformerEmbedding(EmbeddingService):
 
 
 def get_embedding_service(
-    model_name: str = "all-MiniLM-L6-v2",
+    model_name: str = "gemini-embedding-2",
     batch_size: int = 64,
-) -> SentenceTransformerEmbedding:
+) -> EmbeddingService:
     """Return a singleton embedding service instance."""
     global _st_instance
-    if _st_instance is None or _st_instance.model_name != model_name:
+    
+    if "gemini" in model_name:
+        if _st_instance is None or getattr(_st_instance, "model_name", None) != model_name:
+            from app.services.embeddings.gemini_embedding import GeminiEmbeddingService
+            _st_instance = GeminiEmbeddingService(model_name)
+        return _st_instance
+        
+    if _st_instance is None or getattr(_st_instance, "model_name", None) != model_name:
         _st_instance = SentenceTransformerEmbedding(model_name, batch_size)
     return _st_instance

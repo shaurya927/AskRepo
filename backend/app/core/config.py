@@ -37,7 +37,7 @@ class Settings(BaseSettings):
     MAX_TOKENS_PER_REQUEST: int = 4096
 
     # Embeddings — Phase 3
-    EMBEDDING_MODEL: str = "all-MiniLM-L6-v2"
+    EMBEDDING_MODEL: str = "gemini-embedding-2"
     EMBEDDING_BATCH_SIZE: int = 64
 
     # Vector search — Phase 3
