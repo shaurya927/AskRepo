@@ -26,7 +26,7 @@ class TestSettings:
 
     def test_phase3_defaults(self):
         s = Settings(DATABASE_URL="postgresql+asyncpg://test:test@localhost/test")
-        assert s.AI_MODEL == "gemini-2.0-flash"
+        assert s.AI_MODEL == "gemini-2.5-flash"
         assert s.EMBEDDING_MODEL == "all-MiniLM-L6-v2"
         assert s.VECTOR_SEARCH_TOP_K == 15
         assert s.MAX_TOKENS_PER_REQUEST == 4096
