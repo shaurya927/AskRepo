@@ -84,12 +84,26 @@ class RepositoryAgent(BaseAgent):
 
         # For overview/description questions, use LLM to produce a narrative
         if ai_gateway:
-            system = (
-                "You are AskRepo's Repository Analyst. Given repository statistics, "
-                "produce a clear, concise overview of the project. Focus on what the project does, "
-                "its tech stack, and its structure. Only use the provided data."
+            # Try to fetch the README file for context
+            readme_stmt = select(RepositoryFile).where(
+                RepositoryFile.repository_id == repo_id,
+                RepositoryFile.file_path.ilike("%readme.md%")
             )
-            user_prompt = f"Repository data:\n\n{chr(10).join(parts)}\n\nUser question: {query}\n\nProvide a helpful answer."
+            readme_result = await db.execute(readme_stmt)
+            readme_file = readme_result.scalars().first()
+            
+            readme_context = ""
+            if readme_file and readme_file.content:
+                readme_context = f"\n\nREADME Content (first 2000 chars):\n{readme_file.content[:2000]}"
+            elif repo and repo.description:
+                readme_context = f"\n\nRepository Description:\n{repo.description}"
+
+            system = (
+                "You are AskRepo's Onboarding & Repository Analyst. Given the repository's README, description, "
+                "and statistics, explain what the project does in simple words, as if you are onboarding a new developer. "
+                "Focus on its core purpose, how it works at a high level, and the tech stack."
+            )
+            user_prompt = f"Repository Stats:\n{chr(10).join(parts)}{readme_context}\n\nUser question: {query}\n\nProvide a clear, simple explanation."
 
             try:
                 answer, model = await ai_gateway.generate(prompt=user_prompt, system=system, byok_key=kwargs.get("byok_key"))

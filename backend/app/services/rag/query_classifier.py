@@ -25,7 +25,8 @@ _REPOSITORY_PATTERNS = [
     r"\bwhat is this\b", r"\bproject\b", r"\boverview\b",
     r"\btechnolog", r"\bstack\b", r"\bframework\b",
     r"\bwhat does this .+ do\b", r"\bpurpose\b",
-    r"\breadme\b", r"\bdescri",
+    r"\breadme\b", r"\bdescri", r"\bexplain.+project\b",
+    r"\bworking of this project\b", r"\bonboard\b", r"\bsimple words\b",
 ]
 
 _HISTORICAL_PATTERNS = [
