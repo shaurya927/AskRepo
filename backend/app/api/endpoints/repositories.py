@@ -47,15 +47,21 @@ async def create_repository_from_url(
     try:
         await asyncio.to_thread(embed_svc.embed_query, "test")
     except Exception as e:
-        if "429" in str(e) or "Resource has been exhausted" in str(e):
+        err_str = str(e)
+        if "429" in err_str or "Resource has been exhausted" in err_str:
             raise HTTPException(
                 status_code=429, 
                 detail="Server AI API Key quota is fully exhausted. It will reset in approx 24 hours. Please click the Settings gear to add your own Gemini API Key."
             )
-        elif "400" in str(e) or "API_KEY_INVALID" in str(e):
+        elif "400" in err_str or "API_KEY_INVALID" in err_str:
             raise HTTPException(
                 status_code=400,
                 detail="The provided Gemini API Key is invalid."
+            )
+        else:
+            raise HTTPException(
+                status_code=500,
+                detail=f"AI API Test Failed: {err_str}"
             )
             
     github_svc = GitHubService()
