@@ -84,18 +84,8 @@ class RepositoryAgent(BaseAgent):
 
         # For overview/description questions, use LLM to produce a narrative
         if ai_gateway:
-            # Try to fetch the README file for context
-            readme_stmt = select(RepositoryFile).where(
-                RepositoryFile.repository_id == repo_id,
-                RepositoryFile.file_path.ilike("%readme.md%")
-            )
-            readme_result = await db.execute(readme_stmt)
-            readme_file = readme_result.scalars().first()
-            
             readme_context = ""
-            if readme_file and readme_file.content:
-                readme_context = f"\n\nREADME Content (first 2000 chars):\n{readme_file.content[:2000]}"
-            elif repo and repo.description:
+            if repo and repo.description:
                 readme_context = f"\n\nRepository Description:\n{repo.description}"
 
             system = (
