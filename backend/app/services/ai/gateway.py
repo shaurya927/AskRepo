@@ -22,10 +22,20 @@ class AIProvider(ABC):
         ...
 
 
+FALLBACK_CHAIN = {
+    "gemini-3.6-flash": "gemini-2.5-pro",
+    "gemini-3.5-flash": "gemini-2.5-pro",
+    "gemini-2.5-pro": "gemini-2.5-flash",
+    "gemini-2.0-pro": "gemini-2.5-flash",
+    "gemini-1.5-pro": "gemini-1.5-flash",
+    "gemini-2.5-flash": "gemini-1.5-flash",
+    "gemini-1.5-flash": "gemini-1.5-flash-8b",
+}
+
 class GeminiProvider(AIProvider):
     """Google Gemini provider using google-genai SDK."""
 
-    def __init__(self, api_key: str, model: str = "gemini-2.0-flash"):
+    def __init__(self, api_key: str, model: str = "gemini-3.5-flash"):
         from google import genai
         self._client = genai.Client(api_key=api_key)
         self._model = model
@@ -45,8 +55,8 @@ class GeminiProvider(AIProvider):
             )
             return response.text or ""
         except Exception as e:
-            if "429" in str(e) and ("pro" in self._model or "2.0" in self._model):
-                fallback = "gemini-1.5-flash" if "1.5" in self._model else "gemini-2.5-flash"
+            if "429" in str(e) and self._model in FALLBACK_CHAIN:
+                fallback = FALLBACK_CHAIN[self._model]
                 import logging
                 logging.getLogger(__name__).warning(f"Rate limited on {self._model}, falling back to {fallback}")
                 self._model = fallback
@@ -70,8 +80,8 @@ class GeminiProvider(AIProvider):
                 if chunk.text:
                     yield chunk.text
         except Exception as e:
-            if "429" in str(e) and ("pro" in self._model or "2.0" in self._model):
-                fallback = "gemini-1.5-flash" if "1.5" in self._model else "gemini-2.5-flash"
+            if "429" in str(e) and self._model in FALLBACK_CHAIN:
+                fallback = FALLBACK_CHAIN[self._model]
                 import logging
                 logging.getLogger(__name__).warning(f"Rate limited on {self._model}, falling back to {fallback}")
                 self._model = fallback
