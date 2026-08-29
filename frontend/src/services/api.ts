@@ -26,6 +26,14 @@ const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
 })
 
+api.interceptors.request.use((config) => {
+  const byok = localStorage.getItem('askrepo_byok_key')
+  if (byok) {
+    config.headers['X-BYOK-Key'] = byok
+  }
+  return config
+})
+
 export const checkHealth = async (): Promise<HealthResponse> => {
   const response = await api.get('/health')
   return response.data

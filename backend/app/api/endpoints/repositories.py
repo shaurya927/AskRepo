@@ -34,9 +34,31 @@ async def create_repository_from_url(
     url: str = Form(...),
     background_tasks: BackgroundTasks = BackgroundTasks(),
     db: AsyncSession = Depends(get_db),
+    x_byok_key: str | None = Header(None, alias="X-BYOK-Key"),
 ):
     """Create a repository analysis from a GitHub URL."""
     settings = get_settings()
+    
+    # Test API Key limit
+    from app.services.embeddings.embedding_service import get_embedding_service
+    from google.genai.errors import ClientError
+    import asyncio
+    
+    embed_svc = get_embedding_service(settings.EMBEDDING_MODEL, byok_key=x_byok_key)
+    try:
+        await asyncio.to_thread(embed_svc.embed_query, "test")
+    except Exception as e:
+        if "429" in str(e) or "Resource has been exhausted" in str(e):
+            raise HTTPException(
+                status_code=429, 
+                detail="Server AI API Key quota is fully exhausted. It will reset in approx 24 hours. Please click the Settings gear to add your own Gemini API Key."
+            )
+        elif "400" in str(e) or "API_KEY_INVALID" in str(e):
+            raise HTTPException(
+                status_code=400,
+                detail="The provided Gemini API Key is invalid."
+            )
+            
     github_svc = GitHubService()
     if not github_svc.validate_url(url):
         raise HTTPException(status_code=400, detail="Invalid GitHub URL. Must be https://github.com/{owner}/{repo}")
@@ -63,7 +85,7 @@ async def create_repository_from_url(
     await db.commit()
     await db.refresh(job)
     analyzer = RepositoryAnalyzer(settings, db)
-    background_tasks.add_task(analyzer.analyze, job.id, repo.id, url, None)
+    background_tasks.add_task(analyzer.analyze, job.id, repo.id, url, None, x_byok_key)
     return {"repository_id": str(repo.id), "job_id": str(job.id)}
 
 
@@ -72,6 +94,7 @@ async def create_repository_from_zip(
     file: UploadFile = File(...),
     background_tasks: BackgroundTasks = BackgroundTasks(),
     db: AsyncSession = Depends(get_db),
+    x_byok_key: str | None = Header(None, alias="X-BYOK-Key"),
 ):
     """Create a repository analysis from an uploaded ZIP file."""
     settings = get_settings()
@@ -92,7 +115,7 @@ async def create_repository_from_zip(
     await db.commit()
     await db.refresh(job)
     analyzer = RepositoryAnalyzer(settings, db)
-    background_tasks.add_task(analyzer.analyze, job.id, repo.id, None, file)
+    background_tasks.add_task(analyzer.analyze, job.id, repo.id, None, file, x_byok_key)
     return {"repository_id": str(repo.id), "job_id": str(job.id)}
 
 

@@ -91,6 +91,7 @@ class RepositoryAnalyzer:
         repo_id: uuid.UUID,
         url: str | None,
         file: UploadFile | None,
+        byok_key: str | None = None,
     ):
         """Run the full analysis pipeline."""
         target_dir = Path(self.settings.TEMP_REPOSITORY_PATH) / str(job_id)
@@ -219,6 +220,7 @@ class RepositoryAnalyzer:
                     embed_svc = get_embedding_service(
                         model_name=settings.EMBEDDING_MODEL,
                         batch_size=settings.EMBEDDING_BATCH_SIZE,
+                        byok_key=byok_key,
                     )
                     texts = [c.text for c in all_chunks]
                     embeddings = embed_svc.embed_texts(texts)

@@ -67,13 +67,17 @@ class SentenceTransformerEmbedding(EmbeddingService):
 def get_embedding_service(
     model_name: str = "gemini-embedding-2",
     batch_size: int = 64,
+    byok_key: str | None = None,
 ) -> EmbeddingService:
-    """Return a singleton embedding service instance."""
+    """Return a singleton embedding service instance. (BYOK bypasses singleton)."""
     global _st_instance
     
     if "gemini" in model_name:
+        from app.services.embeddings.gemini_embedding import GeminiEmbeddingService
+        if byok_key:
+            return GeminiEmbeddingService(model_name, api_key=byok_key)
+            
         if _st_instance is None or getattr(_st_instance, "model_name", None) != model_name:
-            from app.services.embeddings.gemini_embedding import GeminiEmbeddingService
             _st_instance = GeminiEmbeddingService(model_name)
         return _st_instance
         

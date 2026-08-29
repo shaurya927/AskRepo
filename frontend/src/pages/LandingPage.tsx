@@ -126,7 +126,26 @@ const LandingPage: React.FC = () => {
         </div>
       </SpotlightCard>
       
-      <footer className="mt-8 mb-4 text-center text-xs text-gray-400 dark:text-[#6e7681]">
+      <div className="w-full max-w-2xl mx-auto mb-8 text-center">
+        <button 
+          onClick={() => {
+            const currentKey = localStorage.getItem('askrepo_byok_key') || '';
+            const newKey = window.prompt("The public server API key allows 1500 requests/day. If you face rate limits, you can provide your own Google Gemini API key here:", currentKey);
+            if (newKey !== null) {
+              if (newKey.trim() === '') {
+                localStorage.removeItem('askrepo_byok_key');
+              } else {
+                localStorage.setItem('askrepo_byok_key', newKey.trim());
+              }
+            }
+          }}
+          className="text-sm text-gray-500 hover:text-gray-900 dark:text-[#8b949e] dark:hover:text-[#c9d1d9] underline transition-colors"
+        >
+          Configure Custom Gemini API Key (Optional)
+        </button>
+      </div>
+
+      <footer className="mt-4 mb-4 text-center text-xs text-gray-400 dark:text-[#6e7681]">
         Built for developers.
       </footer>
       </div>

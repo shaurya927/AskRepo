@@ -191,6 +191,23 @@ const DashboardPage: React.FC = () => {
               <GithubIcon size={18} />
               <span>GitHub</span>
             </a>
+            <button 
+              onClick={() => {
+                const currentKey = localStorage.getItem('askrepo_byok_key') || '';
+                const newKey = window.prompt("The public server API key allows 1500 requests/day. If you face rate limits, you can provide your own Google Gemini API key here:", currentKey);
+                if (newKey !== null) {
+                  if (newKey.trim() === '') {
+                    localStorage.removeItem('askrepo_byok_key');
+                  } else {
+                    localStorage.setItem('askrepo_byok_key', newKey.trim());
+                  }
+                }
+              }}
+              className="text-gray-500 hover:text-gray-900 dark:text-[#8b949e] dark:hover:text-[#e6edf3] p-1 rounded-md"
+              title="API Key Settings"
+            >
+              <Settings size={18} />
+            </button>
             <ThemeToggle />
           </div>
         </div>

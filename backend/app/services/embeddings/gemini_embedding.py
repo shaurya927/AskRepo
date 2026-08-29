@@ -5,10 +5,10 @@ from google import genai
 from app.core.config import get_settings
 
 class GeminiEmbeddingService(EmbeddingService):
-    def __init__(self, model_name: str = "gemini-embedding-2"):
+    def __init__(self, model_name: str = "gemini-embedding-2", api_key: str | None = None):
         self.model_name = model_name
         settings = get_settings()
-        self.client = genai.Client(api_key=settings.GOOGLE_API_KEY)
+        self.client = genai.Client(api_key=api_key or settings.GOOGLE_API_KEY)
 
     def embed_texts(self, texts: list[str]) -> np.ndarray:
         if not texts:
