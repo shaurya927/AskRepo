@@ -40,28 +40,37 @@ async def lifespan(app: FastAPI):
             
     asyncio.create_task(_preload())
     
-    # Auto-ping mechanism to keep Render Free Tier awake
+    # Auto-ping mechanism to keep Render Free Tier and Neon Database awake
     import os
     async def _keep_alive():
         url = os.environ.get("RENDER_EXTERNAL_URL")
-        if not url:
-            return
-            
-        logger.info("Keep-alive task started for %s", url)
-        # Avoid circular imports or blocking the loop; use httpx asynchronously
+        from app.core.database import async_session_maker
+        from sqlalchemy import text
         import httpx
+        
+        logger.info("Keep-alive task started for %s and Neon DB", url or "local")
+        
         async with httpx.AsyncClient() as client:
             while True:
-                await asyncio.sleep(600)  # Ping every 10 minutes
+                await asyncio.sleep(240)  # Ping every 4 minutes to prevent 5-min DB sleep
+                
+                # 1. Keep Neon Postgres Awake
                 try:
-                    # Hit our own static root or API so Render sees inbound internet traffic
-                    await client.get(f"{url.rstrip('/')}/", timeout=10.0)
-                    logger.debug("Keep-alive ping sent successfully")
+                    async with async_session_maker() as session:
+                        await session.execute(text("SELECT 1"))
+                    logger.debug("Database keep-alive ping successful")
                 except Exception as e:
-                    logger.warning("Keep-alive ping failed: %s", e)
+                    logger.warning("Database keep-alive ping failed: %s", e)
+                
+                # 2. Keep Render Web Service Awake
+                if url:
+                    try:
+                        await client.get(f"{url.rstrip('/')}/api/health", timeout=10.0)
+                        logger.debug("Web service keep-alive ping successful")
+                    except Exception as e:
+                        logger.warning("Web service keep-alive ping failed: %s", e)
 
-    if os.environ.get("RENDER_EXTERNAL_URL"):
-        asyncio.create_task(_keep_alive())
+    asyncio.create_task(_keep_alive())
 
     # Clean up any orphaned temp directories from previous runs
     cleaned = cleanup_stale_workspaces(settings.TEMP_REPOSITORY_PATH, settings.CLEANUP_MAX_AGE_HOURS)
