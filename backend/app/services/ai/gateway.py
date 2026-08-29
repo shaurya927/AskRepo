@@ -37,12 +37,21 @@ class GeminiProvider(AIProvider):
             max_output_tokens=max_tokens,
             temperature=0.3,
         )
-        response = await self._client.aio.models.generate_content(
-            model=self._model,
-            contents=prompt,
-            config=config,
-        )
-        return response.text or ""
+        try:
+            response = await self._client.aio.models.generate_content(
+                model=self._model,
+                contents=prompt,
+                config=config,
+            )
+            return response.text or ""
+        except Exception as e:
+            if "429" in str(e) and ("pro" in self._model or "2.0" in self._model):
+                fallback = "gemini-1.5-flash" if "1.5" in self._model else "gemini-2.5-flash"
+                import logging
+                logging.getLogger(__name__).warning(f"Rate limited on {self._model}, falling back to {fallback}")
+                self._model = fallback
+                return await self.generate(prompt, system, max_tokens)
+            raise
 
     async def generate_stream(self, prompt: str, system: str = "", max_tokens: int = 4096) -> AsyncIterator[str]:
         from google.genai import types
@@ -51,14 +60,26 @@ class GeminiProvider(AIProvider):
             max_output_tokens=max_tokens,
             temperature=0.3,
         )
-        response = await self._client.aio.models.generate_content_stream(
-            model=self._model,
-            contents=prompt,
-            config=config,
-        )
-        async for chunk in response:
-            if chunk.text:
-                yield chunk.text
+        try:
+            response = await self._client.aio.models.generate_content_stream(
+                model=self._model,
+                contents=prompt,
+                config=config,
+            )
+            async for chunk in response:
+                if chunk.text:
+                    yield chunk.text
+        except Exception as e:
+            if "429" in str(e) and ("pro" in self._model or "2.0" in self._model):
+                fallback = "gemini-1.5-flash" if "1.5" in self._model else "gemini-2.5-flash"
+                import logging
+                logging.getLogger(__name__).warning(f"Rate limited on {self._model}, falling back to {fallback}")
+                self._model = fallback
+                # Recursively call generate_stream with the new model
+                async for chunk in self.generate_stream(prompt, system, max_tokens):
+                    yield chunk
+            else:
+                raise
 
     def name(self) -> str:
         return f"gemini:{self._model}"
