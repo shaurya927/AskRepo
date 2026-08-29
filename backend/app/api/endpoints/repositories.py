@@ -3,7 +3,7 @@
 import uuid
 from typing import Optional
 
-from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, HTTPException, UploadFile
+from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, HTTPException, UploadFile, Header
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -41,7 +41,6 @@ async def create_repository_from_url(
     
     # Test API Key limit
     from app.services.embeddings.embedding_service import get_embedding_service
-    from google.genai.errors import ClientError
     import asyncio
     
     embed_svc = get_embedding_service(settings.EMBEDDING_MODEL, byok_key=x_byok_key)
