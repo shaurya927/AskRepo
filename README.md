@@ -11,12 +11,17 @@ AskRepo goes beyond standard prompt engineering by utilizing a multi-agent orche
 * **Router Agent:** Analyzes the user's prompt to determine intent and dispatches the request to the most qualified sub-agent.
 * **Code Agent:** Specializes in explaining syntax, debugging logic, and retrieving highly specific function-level context using vector search.
 * **Architecture Agent:** Understands the broader system design, analyzing the dependency graph to explain how different modules and files interact.
-* **Repository Agent:** Answers high-level questions regarding the repository's purpose, technology stack, and statistical metadata without invoking unnecessary vector searches.
+* **Repository Agent (Onboarding):** Acts as a senior engineer onboarding a new hire. It reads the repository's `README.md` and statistical metadata to explain the project's purpose and functionality in simple, human-readable terms.
 
 ### Advanced Retrieval-Augmented Generation (RAG)
 To ground the AI's responses in factual, repository-specific data, AskRepo implements an advanced RAG pipeline:
 * **Structural Chunking via ASTs:** Instead of arbitrary text splitting, the platform uses Tree-sitter to parse Abstract Syntax Trees (ASTs). This ensures the AI understands the structural boundaries of classes, methods, and functions.
 * **Dense Vector Semantic Search:** Code chunks are converted into 3072-dimensional vectors using Google Gemini Embeddings and stored in a FAISS vector database, enabling blazing-fast nearest-neighbor semantic retrieval.
+
+### High-Availability AI Gateway
+To ensure maximum uptime and handle API rate limits gracefully, AskRepo features a custom-built AI Gateway:
+* **Cascading Model Fallback:** The system automatically routes complex queries to Google's bleeding-edge models (e.g., `gemini-3.5-flash`). If the strict free-tier rate limits are hit, the gateway instantly catches the `429` error and seamlessly cascades down to higher-limit models (`gemini-2.5-pro` -> `gemini-2.5-flash`), guaranteeing uninterrupted service.
+* **Bring Your Own Key (BYOK):** Users can securely input their own Gemini API key via the frontend. The system proactively checks API quota limits during repository upload and instantly falls back to the user's local storage key if the server quota is exhausted.
 
 ### Interactive Architecture Graph
 AskRepo statically analyzes import statements and file dependencies across the codebase to automatically generate a full, interactive 2D network graph. This provides developers with an immediate visual understanding of the repository's architecture and module coupling.
