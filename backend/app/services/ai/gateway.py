@@ -37,7 +37,7 @@ FALLBACK_CHAIN = {
 class GeminiProvider(AIProvider):
     """Google Gemini provider using google-genai SDK."""
 
-    def __init__(self, api_key: str, model: str = "gemini-3.5-flash"):
+    def __init__(self, api_key: str, model: str = "gemini-3.5-flash-lite"):
         from google import genai
         self._client = genai.Client(api_key=api_key)
         self._model = model

@@ -33,7 +33,7 @@ class Settings(BaseSettings):
 
     # AI Gateway — Phase 3
     GOOGLE_API_KEY: str = ""
-    AI_MODEL: str = "gemini-3.5-flash"
+    AI_MODEL: str = "gemini-3.5-flash-lite"
     MAX_TOKENS_PER_REQUEST: int = 4096
 
     # Embeddings — Phase 3
