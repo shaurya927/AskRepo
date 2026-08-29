@@ -44,7 +44,7 @@ async def lifespan(app: FastAPI):
     import os
     async def _keep_alive():
         url = os.environ.get("RENDER_EXTERNAL_URL")
-        from app.core.database import async_session_maker
+        from app.core.database import AsyncSessionLocal
         from sqlalchemy import text
         import httpx
         
@@ -56,7 +56,7 @@ async def lifespan(app: FastAPI):
                 
                 # 1. Keep Neon Postgres Awake
                 try:
-                    async with async_session_maker() as session:
+                    async with AsyncSessionLocal() as session:
                         await session.execute(text("SELECT 1"))
                     logger.debug("Database keep-alive ping successful")
                 except Exception as e:
